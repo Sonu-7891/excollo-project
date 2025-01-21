@@ -24,7 +24,7 @@ const OurServices = () => {
     "(min-width: 1024px) and (max-width: 1199px)"
   );
   const isLandscapeMedium = useMediaQuery(
-    "(min-width: 769px) and (max-width: 900px) and (orientation: landscape)"
+    "(min-width: 625px) and (max-width: 900px) and (orientation: landscape)"
   );
 
   const aiAutomationRef = useRef(null);
