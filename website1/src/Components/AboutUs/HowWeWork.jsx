@@ -101,8 +101,8 @@ const TableContent = styled("div")({
       fontSize: "28px",
     },
   },
-  "@media (min-width: 768px) and (max-width:1024px)": {
-    width: "68%",
+  "@media (min-width: 769px) and (max-width:1024px)": {
+    width: "62%",
     height: "400px", // Make it 90% of the width for mobile
     // Add margin between cards on mobile
     opacity: 1,
@@ -110,10 +110,11 @@ const TableContent = styled("div")({
     visibility: "visible",
     "& h3": {
       fontSize: "28px",
+      margin: "4px",
     },
     "& p": {
       fontSize: "16px", // Adjust font size for mobile
-      margin: "5px",
+      margin: "4px",
     },
   },
   "@media (max-width: 768px)": {
@@ -171,7 +172,8 @@ const TableContent = styled("div")({
   },
   "@media (max-width: 375px)": {
     width: "85%",
-    margin: "auto",marginTop: "10px",
+    margin: "auto",
+    marginTop: "10px",
     marginLeft: "-7px",
   },
   "@media (max-width: 320px)": {

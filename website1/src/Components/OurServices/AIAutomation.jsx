@@ -317,7 +317,9 @@ const AIAutomation = forwardRef((props, ref) => {
     marginBottom: "5rem",
     padding: isTablet || isSpecified ? "1rem" : 0,
     ml: isTablet || isSpecified ? -5 : "-5%",
-    
+    "@media (min-width: 769px) and (max-width:900)": {
+      marginTop: 20,
+    },
   };
 
   const contentStyles = {
@@ -730,7 +732,7 @@ const AIAutomation = forwardRef((props, ref) => {
               fontSize: "2rem",
               background: "linear-gradient(90deg,#2579e3, #8e54f7)",
               WebkitBackgroundClip: "text",
-              color: "transparent",
+              WebkitTextFillColor: "transparent",
             }}
           >
             AI and Automation
@@ -745,92 +747,87 @@ const AIAutomation = forwardRef((props, ref) => {
             <Typography
               variant="h6"
               sx={{
-                textAlign: expanded ? "left" : "center",
+                textAlign: "center",
                 fontSize: "1.2rem",
                 width: "100%",
+                mb: 1,
               }}
             >
               {services[0].title}
             </Typography>
-            <Collapse in={expanded}>
-              <List sx={{ width: "100%" }}>
-                {services[0].details.map((detail, index) => (
-                  <ListItem
-                    key={index}
-                    sx={{
-                      alignItems: "flex-start",
-                      py: 1,
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
-                      <Circle size={8} color="#8E54F7" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={detail}
-                      primaryTypographyProps={{
-                        sx: {
-                          fontSize: "0.95rem",
-                          ml: -1,
-                          color: "rgba(255, 255, 255, 0.85)",
-                        },
+
+            {/* Collapsible section for remaining services */}
+            <Collapse in={expanded} timeout="auto">
+              <Box sx={{ width: "100%" }}>
+                {services.slice(1).map((service, index) => (
+                  <Box key={index} sx={{ mt: 3, width: "100%" }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        textAlign: "left",
+                        fontSize: "1.2rem",
+                        mb: 1,
                       }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-              {services.slice(1).map((service, index) => (
-                <Box key={index} sx={{ mt: 2, width: "100%" }}>
-                  <Typography variant="h6" sx={{ textAlign: "left" }}>
-                    {service.title}
-                  </Typography>
-                  <List>
-                    {service.details.map((detail, index) => (
-                      <ListItem
-                        key={index}
-                        sx={{
-                          alignItems: "flex-start",
-                          py: 1,
-                        }}
-                      >
-                        <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
-                          <Circle size={8} color="#8E54F7" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={detail}
-                          primaryTypographyProps={{
-                            sx: {
-                              fontSize: "0.95rem",
-                              ml: -1,
-                              color: "rgba(255, 255, 255, 0.85)",
-                            },
+                    >
+                      {service.title}
+                    </Typography>
+                    <List>
+                      {service.details.map((detail, detailIndex) => (
+                        <ListItem
+                          key={detailIndex}
+                          sx={{
+                            alignItems: "flex-start",
+                            py: 1,
                           }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              ))}
+                        >
+                          <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
+                            <Circle size={8} color="#8E54F7" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={detail}
+                            primaryTypographyProps={{
+                              sx: {
+                                fontSize: "0.95rem",
+                                ml: -1,
+                                color: "rgba(255, 255, 255, 0.85)",
+                              },
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                ))}
+              </Box>
             </Collapse>
-            <Box
-              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+
+            {/* View More/Less Button */}
+            <Button
+              onClick={() => setExpanded(!expanded)}
+              sx={{
+                color: "#8E54F7",
+                textTransform: "none",
+                fontSize: "1rem",
+                mt: 1,
+                mb: 1,
+                "&:hover": {
+                  background: "transparent",
+                  opacity: 0.8,
+                },
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              <Button
-                onClick={() => setExpanded(!expanded)}
-                sx={{
-                  color: "#8E54F7",
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  p: 0,
-                  m: 2,
-                  "&:hover": {
-                    background: "transparent",
-                    opacity: 0.8,
-                  },
+              {expanded ? "View Less" : "View More"}
+              <ChevronDown
+                size={20}
+                style={{
+                  transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
                 }}
-              >
-                {expanded ? "View Less" : "View More"}
-              </Button>
-            </Box>
+              />
+            </Button>
           </CardContent>
         </Card>
         <Box sx={{ mt: 5 }}>
