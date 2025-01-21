@@ -93,8 +93,8 @@ const HeroPageSection2 = ({ onAnimationComplete }) => {
       sx={{
         color: "#fff",
         minHeight: {
-          xs: "50vh",
-          sm: isTablet ? "50vh" : "70vh",
+          xs: "30vh",
+          sm: isTablet ? "50vh" : "50vh",
           md: "70vh",
         },
         display: "flex",
@@ -115,7 +115,11 @@ const HeroPageSection2 = ({ onAnimationComplete }) => {
         fontFamily: '"Inter", sans-serif',
         position: "relative",
         zIndex: 2,
-        overflow: "hidden",
+        marginTop: {
+          xs: "-60px",
+          sm: "-60px",
+          md: "-18rem",
+        },
       }}
     >
       <Box

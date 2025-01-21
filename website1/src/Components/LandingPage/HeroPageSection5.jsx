@@ -72,11 +72,11 @@ const HeroPageSection5 = () => {
     <Box
       ref={sectionRef}
       sx={{
-        minHeight: "fit-content",
+        minHeight: "70vh",
         fontFamily: '"Inter", sans-serif',
         position: "relative",
         bgcolor: "#000",
-        pt: { xs: 2, sm: 6, md: 6 },
+        pt: { xs: 4, sm: 6, md: 6 },
         pb: { xs: 4, sm: 6, md: 8 },
       }}
     >
@@ -103,7 +103,7 @@ const HeroPageSection5 = () => {
           }}
           variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
           fontWeight="bold"
-          fontSize={isMobile ? "2rem" : isTablet ? "3rem" : "4.5rem"}
+          fontSize= {isMobile ? "2rem" : isTablet ? "3rem" : "4.5rem"}
         >
           How We{" "}
           <Box

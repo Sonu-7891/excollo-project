@@ -239,11 +239,21 @@ const HeroPageSection4 = ({ onComplete }) => {
     return (
       <Box
         sx={{
-          minHeight: "100vh",
+          minHeight: "70vh",
           color: "#fff",
-          // padding: "2rem 1rem",
+          padding: "2rem 1rem",
           fontFamily: '"Inter", sans-serif',
           position: "relative",
+
+
+          "@media (min-width: 600px) and (max-width: 768px)": {
+            mt: 22,
+            mb: -4,
+          },
+          "@media (min-width: 769px) and (max-width: 900px)": {
+            mt: 22,
+            mb: -4,
+          },
         }}
       >
         <Typography
@@ -343,7 +353,7 @@ const HeroPageSection4 = ({ onComplete }) => {
       ref={sectionRef}
       className="hero-page-section-4"
       sx={{
-        height: "fit-content",
+        height: "100vh",
         color: "#fff",
         position: "relative",
         overflow: "hidden",
