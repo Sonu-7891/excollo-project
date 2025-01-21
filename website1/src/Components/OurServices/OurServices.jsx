@@ -20,7 +20,13 @@ const OurServices = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
-  const isSpecified = useMediaQuery("(min-width: 1024px) and (max-width: 1199px)")
+  const isSpecified = useMediaQuery(
+    "(min-width: 1024px) and (max-width: 1199px)"
+  );
+  const isLandscapeMedium = useMediaQuery(
+    "(min-width: 769px) and (max-width: 900px) and (orientation: landscape)"
+  );
+
   const aiAutomationRef = useRef(null);
   const salesChannelRef = useRef(null);
   const mlDrivenDataAnalysisRef = useRef(null);
@@ -36,32 +42,24 @@ const OurServices = () => {
       }
 
       if (!isMobile) {
-        if (aiAutomationRef.current) {
-          aiAutomationRef.current.collapsePanel();
-        }
+        const refs = [
+          aiAutomationRef,
+          salesChannelRef,
+          mlDrivenDataAnalysisRef,
+          productDevelopmentRef,
+          techConsultancyRef,
+        ];
 
-        if (salesChannelRef.current) {
-          salesChannelRef.current.collapsePanel();
-        }
-
-        if (mlDrivenDataAnalysisRef.current) {
-          mlDrivenDataAnalysisRef.current.collapsePanel();
-        }
-
-        if (productDevelopmentRef.current) {
-          productDevelopmentRef.current.collapsePanel();
-        }
-
-        if (techConsultancyRef.current) {
-          techConsultancyRef.current.collapsePanel();
-        }
+        refs.forEach((ref) => {
+          if (ref.current) {
+            ref.current.collapsePanel();
+          }
+        });
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobile]);
 
   const handleScrollToTop = () => {
@@ -72,15 +70,19 @@ const OurServices = () => {
     <Box className="services-section" sx={{ overflow: "hidden" }}>
       <Box
         sx={{
-          minHeight: "100vh",
+          minHeight: isLandscapeMedium ? "120vh" : "100vh",
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
+          position: "relative",
+          zIndex: 2,
         }}
       >
         <Box
           sx={{
             maxWidth: { xs: "95%", sm: "90%", md: "90%" },
-            margin: { xs: "20px auto", md: "50px auto" },
+            margin: isLandscapeMedium
+              ? "120px auto 60px"
+              : { xs: "20px auto", md: "50px auto" },
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             alignItems: "center",
@@ -88,12 +90,18 @@ const OurServices = () => {
         >
           <Box
             sx={{
-              minHeight: { xs: "auto", md: "50vh" },
+              minHeight: isLandscapeMedium
+                ? "auto"
+                : { xs: "auto", md: "50vh" },
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
               alignItems: "center",
-              mt: { xs: "10%", md: "-15%", lg: "-20%" },
+              mt: isLandscapeMedium
+                ? "0"
+                : { xs: "10%", md: "-15%", lg: "-20%" },
               mb: { xs: 0, md: 0 },
+              position: "relative",
+              zIndex: 3,
             }}
           >
             <Box>
@@ -102,23 +110,30 @@ const OurServices = () => {
                   display: "flex",
                   flexDirection: { xs: "column", md: "row" },
                   alignItems: { xs: "center", md: "flex-start" },
+                  marginBottom: isLandscapeMedium ? "40px" : undefined,
                 }}
               >
                 <Typography
                   variant="h2"
                   sx={{
                     textAlign: { xs: "center", md: "left" },
-                    fontSize: {
-                      xs: "2.5rem",
-                      sm: "3rem",
-                      md: "3.5rem",
-                      lg: "4rem",
-                    },
+                    fontSize: isLandscapeMedium
+                      ? "3rem"
+                      : {
+                          xs: "2.5rem",
+                          sm: "3rem",
+                          md: "3.5rem",
+                          lg: "4rem",
+                        },
                     fontFamily: '"Inter", sans-serif',
                     fontWeight: "600",
                     color: "#fff",
-                    whiteSpace: "nowrap", // Prevent line break
-                    ml: isSpecified ? "13%" : { xs: 0, md: "2%", lg: "11%" },
+                    whiteSpace: "nowrap",
+                    ml: isLandscapeMedium
+                      ? "5%"
+                      : isSpecified
+                      ? "13%"
+                      : { xs: 0, md: "2%", lg: "11%" },
                   }}
                 >
                   <span className="highlight">Our </span>
@@ -137,19 +152,27 @@ const OurServices = () => {
 
               <Typography
                 sx={{
-                  maxWidth: { xs: "100%", md: "70%" },
-                  fontSize: {
-                    xs: "1.1rem",
-                    sm: "1.2rem",
-                    md: "1.3rem",
-                    lg: "1.3rem",
-                  },
+                  maxWidth: isLandscapeMedium
+                    ? "90%"
+                    : { xs: "100%", md: "70%" },
+                  fontSize: isLandscapeMedium
+                    ? "1.1rem"
+                    : {
+                        xs: "1.1rem",
+                        sm: "1.2rem",
+                        md: "1.3rem",
+                        lg: "1.3rem",
+                      },
                   fontWeight: 200,
                   lineHeight: 1.7,
                   textAlign: { xs: "center", md: "left" },
-                  ml: isSpecified ? "14%" : { xs: 0, md: "2%", lg: "12%" },
+                  ml: isLandscapeMedium
+                    ? "5%"
+                    : isSpecified
+                    ? "14%"
+                    : { xs: 0, md: "2%", lg: "12%" },
                   px: { xs: 2, md: 0 },
-                  mt: { xs: 3, md: 5 },
+                  mt: isLandscapeMedium ? 2 : { xs: 3, md: 5 },
                 }}
               >
                 Excollo helps enterprises transform their digital stack using
@@ -162,8 +185,12 @@ const OurServices = () => {
             {!isMobile && !isTablet && (
               <Box
                 sx={{
-                  width: { sm: "60%", md: "80%" },
+                  width: isLandscapeMedium ? "50%" : { sm: "60%", md: "80%" },
                   mr: { md: "0%", lg: "0%" },
+                  // display:isLandscapeMedium ? "none" : "block",
+                  "@media (min-width: 200px) and (max-width: 900px)": {
+                    display: "none",
+                  },
                 }}
               >
                 <ThreeDE />
@@ -172,14 +199,18 @@ const OurServices = () => {
           </Box>
         </Box>
       </Box>
+
       <Box
         sx={{
-          mt: { xs: -40 }, // Adjust the margin-top for different screen sizes
-          paddingTop: { xs: 0, md: 0 }, // Remove padding if any
+          position: "relative",
+          zIndex: 1,
+          mt: isLandscapeMedium ? "0" : { xs: -40 },
+          paddingTop: isLandscapeMedium ? "60px" : { xs: 0, md: 0 },
         }}
       >
         <AIAutomation ref={aiAutomationRef} />
       </Box>
+
       <Box>
         <SalesChannelDevelopment ref={salesChannelRef} />
       </Box>
@@ -192,6 +223,7 @@ const OurServices = () => {
       <Box>
         <TechConsultancy ref={techConsultancyRef} />
       </Box>
+
       <Fade in={showButton}>
         <Button
           onClick={handleScrollToTop}
@@ -199,24 +231,14 @@ const OurServices = () => {
           color="primary"
           sx={{
             position: "fixed",
-            bottom: 50,
+            bottom: isLandscapeMedium ? 30 : 50,
+            right: isLandscapeMedium ? 30 : 50,
             height: 60,
-            right: 50,
             zIndex: 1000,
             borderRadius: "50%",
             background: "rgba(255, 255, 255, 0.1)",
             "&:hover": {
               background: "linear-gradient(180deg, #2579e3 0%, #8e54f7 100%)",
-            },
-            "@media (max-width: 768px)": {
-              position: "fixed",
-              bottom: 50,
-              right: 50,
-            },
-            "@media (max-width: 480px)": {
-              position: "fixed",
-              bottom: 50,
-              right: 50,
             },
           }}
         >

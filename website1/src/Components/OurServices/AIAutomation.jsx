@@ -317,6 +317,7 @@ const AIAutomation = forwardRef((props, ref) => {
     marginBottom: "5rem",
     padding: isTablet || isSpecified ? "1rem" : 0,
     ml: isTablet || isSpecified ? -5 : "-5%",
+    
   };
 
   const contentStyles = {
