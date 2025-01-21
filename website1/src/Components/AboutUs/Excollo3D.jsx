@@ -58,7 +58,7 @@ const Excollo3D = () => {
           overflow: "hidden",
           "@media (max-width: 1200px)": {
             width: "100%",
-            marginTop: "-5%",
+            marginTop: "-15% auto",
           },
           "@media (max-width: 768px)": {
             width: "100%",

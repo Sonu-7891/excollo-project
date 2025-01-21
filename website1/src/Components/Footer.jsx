@@ -14,7 +14,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const Footer = () => {
-  const isTablet = useMediaQuery("(min-width:480px) and (max-width:768px)");
+  const isTablet = useMediaQuery("(min-width:480px) and (max-width:900px)");
 
   const navigationLinks = [
     { name: "Home", path: "/" },
@@ -24,7 +24,7 @@ const Footer = () => {
   ];
 
   const TabletLayout = () => (
-    <Box sx={{ width: "80%", margin: "auto", marginLeft: "15%" }}>
+    <Box sx={{ width: "80%", margin: "auto", marginLeft: "15%"}}>
       {/* Excollo Section */}
       <Box sx={{ display: "flex", mb: 4 }}>
         <Typography variant="h6" sx={{ width: "30%", fontWeight: "500" }}>
@@ -199,7 +199,7 @@ const Footer = () => {
           height: "12%",
           background: `radial-gradient(ellipse at bottom, rgba(196, 188, 213, 1) 0%, rgba(0, 0, 0, 0) 60%)`,
           zIndex: -1,
-          "@media (max-width: 768px)": {
+          "@media (max-width: 900px)": {
             display: "none",
           },
         }}
