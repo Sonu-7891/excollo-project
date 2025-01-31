@@ -41,7 +41,7 @@ const Excollo3D = () => {
     if (isMobile || isTablet) return;
     setRotation({ x: 0, y: 0 });
   };
-  const translateYImage = Math.max(1870 - scrollY * 0.5, 0);
+  const translateYImage = Math.max(1500 - scrollY * 0.5, 0);
   const gradientOpacity =
     scrollY > 100 ? Math.min((scrollY - 800) / 300, 1) : 1;
   return (
@@ -53,12 +53,11 @@ const Excollo3D = () => {
         position="relative"
         zIndex={2}
         sx={{
-          height: "400px",
+          height: "100%",
           width: "100%",
           overflow: "hidden",
           "@media (max-width: 1200px)": {
             width: "100%",
-            marginTop: "-15% auto",
           },
           "@media (max-width: 768px)": {
             width: "100%",
@@ -82,7 +81,7 @@ const Excollo3D = () => {
             transform:
               isMobile || isTablet
                 ? "none"
-                : `translateY(${Math.min(translateYImage, 1300)}px) rotateX(${
+                : `translateY(${Math.min(translateYImage, 100)}px) rotateX(${
                     rotation.y
                   }deg) rotateY(${rotation.x}deg)`,
             transformStyle: "preserve-3d",

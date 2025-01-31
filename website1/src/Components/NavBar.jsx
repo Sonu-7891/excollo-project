@@ -21,6 +21,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import BuildIcon from "@mui/icons-material/Build";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import CloseIcon from "@mui/icons-material/Close";
+import ExcolloWebsiteLogo from "../assets/logo/ExcolloWebsiteLogo.png";
 
 const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -33,16 +34,15 @@ const NavBar = () => {
 
   const commonLinkStyles = {
     textDecoration: "none",
-    fontSize: "16px",
+    fontSize: "calc(0.9vw + 0.9vh)",
     position: "relative",
     padding: "10px 20px",
     color: "white",
-    "&:hover": {
-      background:
-        "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
-      border: "1px solid transparent",
-      borderRadius: "40px",
-    },
+    // "&:hover": {
+    //   background:
+    //     "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
+    //   borderRadius: "40px",
+    // },
   };
 
   const menuItems = [
@@ -122,10 +122,11 @@ const NavBar = () => {
           backgroundColor: "transparent",
           boxShadow: "none",
           position: "relative",
-          width: "85%",
+          width: "100%",
           zIndex: 10,
+          pt: 4,
           margin: "0 auto",
-          "@media (max-width: 320px)": {
+          "@media (max-width: 319px)": {
             margin: "0 auto 0 -20px", // Adjust the left margin for smaller screens
           },
           "@media (min-width: 375px && max-width: 725px)": {
@@ -133,19 +134,21 @@ const NavBar = () => {
           },
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
+        <Toolbar
+          sx={{
+            justifyContent: "space-between",
+            position: "relative",
+            width: "85%",
+            margin: "auto",
+          }}
+        >
           <Box
             display="flex"
             alignItems="center"
-            padding={4}
             sx={{ position: "relative", zIndex: 0 }}
           >
             <Link to="/">
-              <img
-                src="https://www.excollo.com/images/logo.svg"
-                alt="excollo"
-                loading="lazy"
-              />
+              <img src={ExcolloWebsiteLogo} alt="excollo" loading="lazy" />
             </Link>
           </Box>
 
@@ -164,16 +167,63 @@ const NavBar = () => {
           ) : (
             <Box
               display="flex"
-              gap="20px"
-              sx={{ position: "relative", zIndex: 0, overflow: "hidden" }}
+              sx={{
+                position: "relative",
+                zIndex: 0,
+                gap: {
+                  md: "1rem", // Larger screens
+                  lg: "1.5rem", // Extra-large screens
+                  xl: "3rem", // Extra-extra-large screens
+                },
+              }}
             >
-              <Typography component={Link} to="/" sx={commonLinkStyles}>
+              <Typography
+                component={Link}
+                to="/"
+                sx={{
+                  ...commonLinkStyles,
+                  height: "100%",
+                  mt: 1,
+                  "&:hover": {
+                    background:
+                      "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
+                    borderRadius: "40px",
+                  },
+                }}
+              >
                 Home
               </Typography>
-              <Typography component={Link} to="/about" sx={commonLinkStyles}>
+              <Typography
+                component={Link}
+                to="/about"
+                sx={{
+                  ...commonLinkStyles,
+                  height: "100%",
+                  mt: 1,
+                  "&:hover": {
+                    background:
+                      "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
+                    borderRadius: "40px",
+                  },
+                }}
+              >
                 About
               </Typography>
-              <Typography component={Link} to="/services" sx={commonLinkStyles}>
+              <Typography
+                component={Link}
+                to="/services"
+                sx={{
+                  ...commonLinkStyles,
+                  height: "100%",
+                  mt: 1,
+                  // paddingBottom:"-10px",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
+                    borderRadius: "40px",
+                  },
+                }}
+              >
                 Services
               </Typography>
               <Typography
@@ -184,7 +234,10 @@ const NavBar = () => {
                   display: "flex",
                   alignItems: "center",
                   position: "relative",
-                  padding: "10px 20px",
+                  padding: {
+                    md: "0.3vw",
+                    xl: "0.3vw",
+                  },
                   borderRadius: "40px",
                   background: "transparent",
                   "&::before": {
@@ -194,7 +247,11 @@ const NavBar = () => {
                     padding: "2px", // Adjust the thickness of the border
                     background:
                       "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
-                    borderRadius: "40px",
+                    borderRadius: {
+                      md: "40px",
+                      lg: "40px",
+                      xl: "50px",
+                    },
                     WebkitMask:
                       "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                     WebkitMaskComposite: "xor",
@@ -211,10 +268,21 @@ const NavBar = () => {
                   },
                 }}
               >
-                <Box>LET'S TALK</Box>
-                <Box>
+                <Typography
+                  component={Link}
+                  to="/contact"
+                  sx={{
+                    ...commonLinkStyles,
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
+                  LET'S TALK
+                </Typography>
+                <Box sx={{ mt: "4%" }}>
                   <FaChevronRight
-                    style={{ marginLeft: "20px", marginTop: "3px" }}
+                    style={{ marginLeft: "0px", marginRight: "10px" }}
                   />
                 </Box>
               </Typography>

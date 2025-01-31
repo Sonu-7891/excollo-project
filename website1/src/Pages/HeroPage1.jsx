@@ -7,14 +7,13 @@ import HeroPageSection4 from "../Components/LandingPage/HeroPageSection4";
 import HeroPageSection5 from "../Components/LandingPage/HeroPageSection5";
 import ThreeDE from "../Components/ThreeDE";
 import OurServices from "../Components/OurServices/OurServices";
+import HeroPageSection1 from "../Components/LandingPage/HeroPageSection1";
 
 const HeroPage1 = () => {
   return (
     <div>
       <HeroPageSection2 />
-      <HeroPageSection4 />
-      <HeroPageSection6 />
-      <HeroPageSection4 />
+      <HeroPageSection3 />
     </div>
   );
 };

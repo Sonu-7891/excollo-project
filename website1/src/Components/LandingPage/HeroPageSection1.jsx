@@ -5,8 +5,9 @@ const HeroPageSection1 = ({ animationComplete }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isSmallerLaptop = useMediaQuery(theme.breakpoints.up("md"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
-
+  const isXtraLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
   const isTabletOrMobile = isMobile || isTablet;
 
   return (
@@ -19,36 +20,34 @@ const HeroPageSection1 = ({ animationComplete }) => {
         width: {
           xs: "100%",
           sm: "95%",
-          md: "80%",
+          md: "100%",
         },
         px: {
           xs: 2,
           sm: 4,
-          md: 3,
+          md: 0,
         },
         marginLeft: {
           xs: 0,
           sm: "2.5%",
-          md: "3%",
-          lg: "7%",
+          md: "7.5%",
         },
         marginRight: {
           xs: 0,
           sm: "2.5%",
-          md: "6%",
+          md: "0%",
         },
         position: "relative",
         minHeight: {
-        xs: "500px",  // Fixed pixel height for mobile
-        sm: "500px",
-        md: "95vh"    // Keep vh units for larger screens
-},
+          xs: "500px", // Fixed pixel height for mobile
+          sm: "500px",
+          md: "60vh", // Keep vh units for larger screens
+        },
         zIndex: 2,
-        "--gradient-start": "#ff7e5f",
-        "--gradient-end": "#feb47b",
-        "@media (min-width: 769px) and (max-width:1024px)": {
-          marginLeft: "6%",
-          marginTop: "-6%",
+        marginTop: {
+          md: "calc(45vh - 7%)",
+          lg: "calc(47.5vh - 8%)",
+          xl: "calc(50vh - 10%)",
         },
       }}
     >
@@ -57,19 +56,19 @@ const HeroPageSection1 = ({ animationComplete }) => {
           maxWidth: {
             xs: "100%",
             sm: "95%",
-            md: "80%",
+            md: "85%",
           },
           opacity: isTabletOrMobile ? 1 : animationComplete ? 1 : 0,
           transform: isTabletOrMobile
             ? "none"
             : animationComplete
             ? "none"
-            : "translateX(50px)",
+            : "translateX(-100px)",
           transition: "opacity 0.5s ease, transform 0.5s ease",
           padding: {
             xs: 2,
             sm: 4,
-            md: 5,
+            md: 0,
           },
         }}
       >
@@ -77,22 +76,18 @@ const HeroPageSection1 = ({ animationComplete }) => {
           variant="h3"
           component="h1"
           sx={{
-            fontWeight: 200,
+            fontWeight: 400,
             fontSize: {
-              xs: "1.5rem",
-              sm: "2.2rem",
-              md: "2.5rem",
-              lg: "3rem",
+              md: `clamp(1.75rem, calc(1.25rem + 2.5vw), 9rem)`,
+              lg: `clamp(1.75rem, calc(1.37rem + 3vw), 8rem)`,
+              xl: `clamp(2.25rem, calc(2rem + 3vw), 10rem)`,
             },
-            lineHeight: 1.5,
+            lineHeight: 1.167, // Line height remains the same
+            letterSpacing: "-0.01562em",
             mt: {
               xs: 20,
               sm: 22,
-              md: 25,
-              lg: 25,
-            },
-            "@media (min-width: 769px) and (max-width:1024px)": {
-              fontSize: "2.2rem",
+              md: 0,
             },
           }}
         >
@@ -103,14 +98,14 @@ const HeroPageSection1 = ({ animationComplete }) => {
           variant="h3"
           sx={{
             fontWeight: 600,
-            lineHeight: 1.2,
+            lineHeight: 1.167,
+            letterSpacing: "-0.01562em",
             fontSize: {
-              xs: "1.75rem",
-              sm: "2.25rem",
-              md: "2.75rem",
-              lg: "3.25rem",
+              md: `clamp(1.75rem, calc(1.25rem + 2.5vw), 9rem)`,
+              lg: `clamp(1.75rem, calc(1.37rem + 3vw), 8rem)`,
+              xl: `clamp(2.25rem, calc(2rem + 3vw), 10rem)`,
             },
-            "@media (min-width: 769px) and (max-width:1024px)": {
+            "@media (min-width: 769px) and (max-width:899)": {
               fontSize: "2.5rem",
             },
           }}
@@ -142,11 +137,11 @@ const HeroPageSection1 = ({ animationComplete }) => {
             >
               Outcome Driven{" "}
             </span>
+            &nbsp;
             <span
               style={{
                 background: "linear-gradient(180deg, #2579e3 0%, #8e54f7 100%)",
                 WebkitBackgroundClip: "text",
-                marginLeft: "12px",
                 WebkitTextFillColor: "transparent",
                 display: "inline-block",
                 wordBreak: "break-word",
@@ -162,46 +157,27 @@ const HeroPageSection1 = ({ animationComplete }) => {
           variant="h5"
           component="h5"
           sx={{
-            fontWeight: 200,
             fontSize: {
-              xs: "1rem",
-              sm: "1.15rem",
-              md: "1.2rem",
-              lg: "1.3rem",
+              md: `clamp(0.5rem, calc(0.8rem + 0.6vw), 1.5rem)`,
+              lg: `clamp(0.5rem, calc(0.8rem + 0.7vw), 1.8rem)`,
+              xl: `clamp(0.5rem, calc(0.8rem + 0.8vw), 2.1rem)`,
             },
-            lineHeight: 1.5,
-            marginLeft: isTabletOrMobile ? 0 : "0.5%",
+            fontWeight: 200,
+            lineHeight: 1.7,
+            marginLeft: isTabletOrMobile ? 0 : "1%",
+            mb: {
+              xs: 4,
+              sm: 5,
+              md: 4.5,
+            },
             textAlign: isTabletOrMobile ? "center" : "left",
-            "@media (min-width: 769px) and (max-width:1024px)": {
+            "@media (min-width: 769px) and (max-width:899px)": {
               fontSize: "1.2rem",
             },
           }}
         >
-          Unlock the potential of AI to transform your business and
-        </Typography>
-
-        <Typography
-          variant="h5"
-          component="h5"
-          sx={{
-            fontWeight: 200,
-            fontSize: {
-              xs: "1rem",
-              sm: "1.15rem",
-              md: "1.2rem",
-              lg: "1.3rem",
-            },
-            lineHeight: 1.5,
-            mb: {
-              xs: 4,
-              sm: 5,
-              md: 6,
-            },
-            marginLeft: isTabletOrMobile ? 0 : "0.5%",
-            textAlign: isTabletOrMobile ? "center" : "left",
-          }}
-        >
-          redefine success.
+          Unlock the potential of AI to transform your business and redefine
+          success.
         </Typography>
 
         <Box
@@ -218,18 +194,21 @@ const HeroPageSection1 = ({ animationComplete }) => {
               display: "inline-block",
               color: "#ffffff",
               textDecoration: "none",
+              fontWeight: 100,
               fontSize: {
                 xs: "16px",
                 sm: "17px",
-                md: "18px",
+                md: `clamp(1rem, calc(0.3rem + 1vw), 1.5rem)`,
+                xl: `clamp(0.5rem, calc(0.6rem + 1.1vw), 5rem)`,
               },
               border: "1px solid transparent",
               padding: {
                 xs: "15px 30px",
                 sm: "16px 32px",
-                md: "20px 40px",
+                md: "1.6vw",
+                xl: "1.8vw",
               },
-              borderRadius: "40px",
+              borderRadius: { sm: "40px", md: "80px", xl: "80px" },
               background:
                 "linear-gradient(to right, #000, #000) padding-box, linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%) border-box",
               zIndex: 3,

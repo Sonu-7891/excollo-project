@@ -34,17 +34,67 @@ const AIAutomation = forwardRef((props, ref) => {
   const [currentDotIndex, setCurrentDotIndex] = useState(0);
   const symbolRefs = useRef([]);
   const circleRef = useRef(null);
+  const lastAccordionRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isSpecified = useMediaQuery(
-    "(min-width: 1024px) and (max-width: 1199px)"
+  const isSpecified = useMediaQuery(theme.breakpoints.up("md"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXtraLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
+  const is1536pxto1789px = useMediaQuery(
+    "(min-width: 1536px) and (max-width: 1789px)"
+  );
+  const is1790pxto2000px = useMediaQuery(
+    "(min-width: 1790px) and (max-width: 2000px)"
+  );
+  const is2001pxto2250px = useMediaQuery(
+    "(min-width: 2001px) and (max-width: 2275px)"
+  );
+  const is2251pxto2550px = useMediaQuery(
+    "(min-width: 2251px) and (max-width: 2550px)"
   );
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
+
+    if (isExpanded && panel === services[services.length - 1].id) {
+      setTimeout(() => {
+        const element = symbolRefs.current[services.length - 1];
+        const offset = 480; // Adjust this value to scroll slightly (in pixels)
+        const elementTop = element.getBoundingClientRect().top + window.scrollY;
+
+        window.scrollTo({
+          top: elementTop - offset,
+          behavior: "smooth",
+        });
+      }, 0);
+    }
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            setExpanded(false);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!isMobile) {
@@ -53,8 +103,7 @@ const AIAutomation = forwardRef((props, ref) => {
           const newIndex = Math.floor(Math.random() * services.length);
           return newIndex;
         });
-      }, 2000);
-
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [isMobile]);
@@ -75,14 +124,37 @@ const AIAutomation = forwardRef((props, ref) => {
         .closest(".services-container")
         .getBoundingClientRect();
 
-      console.log("Updating circle position for index:", currentDotIndex); // Debug log
+      let topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+      let leftOffset = rect.left - parentRect.left + rect.width / 2 - 20;
+
+      if (isLargeScreen) {
+        topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+        leftOffset = rect.left - parentRect.left + rect.width / 2 - 27;
+      }
+      if (is1536pxto1789px) {
+        topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+        leftOffset = rect.left - parentRect.left + rect.width / 2 - 32;
+      }
+      if (is1790pxto2000px) {
+        topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+        leftOffset = rect.left - parentRect.left + rect.width / 2 - 37;
+      }
+      if (is2001pxto2250px) {
+        topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+        leftOffset = rect.left - parentRect.left + rect.width / 2 - 42;
+      }
+
+      if (is2251pxto2550px) {
+        topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
+        leftOffset = rect.left - parentRect.left + rect.width / 2 - 48;
+      }
       gsap.to(circleRef.current, {
-        top: rect.top - parentRect.top + rect.height / 2 - 30,
-        left: rect.left - parentRect.left + rect.width / 2 - 150, // Adjusted left position
+        top: topOffset,
+        left: leftOffset,
         ease: "power2.inOut",
+        visibility: "visible",
+        opacity: 1,
       });
-    } else {
-      console.log("Conditions not met for updating circle position"); // Debug log
     }
   };
 
@@ -114,7 +186,7 @@ const AIAutomation = forwardRef((props, ref) => {
         },
         {
           opacity: 1,
-          y: 200,
+          y: 300,
           duration: 1,
           scrollTrigger: {
             trigger: ".fade-in-heading",
@@ -129,8 +201,8 @@ const AIAutomation = forwardRef((props, ref) => {
           opacity: 1,
           scrollTrigger: {
             trigger: ".fade-in-heading",
-            start: "top 50%",
-            end: "top 40%",
+            start: "top 40%",
+            end: "top 35%",
             scrub: 1,
           },
         })
@@ -140,8 +212,8 @@ const AIAutomation = forwardRef((props, ref) => {
           delay: 1,
           scrollTrigger: {
             trigger: ".animate-content",
-            start: "top 8%",
-            end: "top 5%",
+            start: "top 20%",
+            end: "top 10%",
             scrub: 1,
           },
         })
@@ -181,7 +253,7 @@ const AIAutomation = forwardRef((props, ref) => {
   }, [isMobile, isTablet]);
 
   useEffect(() => {
-    if (isSpecified || isTablet) {
+    if (isTablet) {
       gsap.set(".tablet-heading", {
         y: 100,
         opacity: 0,
@@ -236,7 +308,7 @@ const AIAutomation = forwardRef((props, ref) => {
           });
         });
     }
-  }, [isTablet, isSpecified]);
+  }, [isTablet]);
 
   const services = [
     {
@@ -317,9 +389,6 @@ const AIAutomation = forwardRef((props, ref) => {
     marginBottom: "5rem",
     padding: isTablet || isSpecified ? "1rem" : 0,
     ml: isTablet || isSpecified ? -5 : "-5%",
-    "@media (min-width: 769px) and (max-width:900)": {
-      marginTop: 20,
-    },
   };
 
   const contentStyles = {
@@ -335,194 +404,6 @@ const AIAutomation = forwardRef((props, ref) => {
     ml: isTablet ? 0 : "5%",
     marginBottom: isTablet || isSpecified ? "2rem" : "3rem",
   };
-
-  if (isSpecified) {
-    return (
-      <Box className="services-container" sx={containerStyles}>
-        {!isSpecified && (
-          <Box
-            className="fade-in-heading"
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100vh",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Box>
-              <Typography
-                variant="h1"
-                sx={{ fontWeight: "500", textAlign: "center" }}
-              >
-                AI & Automation
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="h4"
-                sx={{ textAlign: "center", fontWeight: "500", mt: 2 }}
-              >
-                Empower your business with AI
-              </Typography>
-            </Box>
-          </Box>
-        )}
-
-        <Box
-          className={isSpecified ? "" : "animate-content"}
-          sx={{
-            position: isSpecified ? "relative" : "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: isSpecified ? "auto" : "100vh",
-            padding: "2rem",
-            "&::-webkit-scrollbar": {
-              width: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "rgba(0, 0, 0, 0.1)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "rgba(37, 121, 227, 0.5)",
-              borderRadius: "4px",
-            },
-          }}
-        >
-          <Box sx={contentStyles}>
-            {isSpecified && (
-              <Typography
-                variant="h2"
-                sx={{
-                  ...titleStyles,
-                  background: "linear-gradient(180deg, #2579e3, #8e54f7)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  textFillColor: "transparent",
-                  textAlign: "center",
-                  fontSize: "2.8rem",
-                  fontWeight: 500,
-                  mb: 4,
-                }}
-                className="tablet-heading"
-              >
-                AI & Automation
-              </Typography>
-            )}
-            {services.map((service, index) => (
-              <Box className="tablet-service-item" key={service.id}>
-                <Accordion
-                  expanded={expanded === service.id}
-                  onChange={handleChange(service.id)}
-                  sx={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    boxShadow: "none",
-                    "&.Mui-expanded": {
-                      margin: 0,
-                    },
-                  }}
-                >
-                  <AccordionSummary
-                    expandIcon={<ChevronDown style={{ color: "#fff" }} />}
-                    sx={{
-                      "&.Mui-expanded": {
-                        minHeight: isSpecified ? 80 : 105,
-                        margin: 0,
-                      },
-                      minHeight: isSpecified ? 80 : 105,
-                    }}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontSize: isSpecified ? "1.1rem" : "1.7rem",
-                        position: "relative",
-                        ml: isSpecified ? -5 : "1%",
-                      }}
-                      className={isSpecified ? "tablet-service-item" : ""}
-                    >
-                      <span
-                        ref={(el) => (symbolRefs.current[index] = el)}
-                        style={{ display: "inline-block" }}
-                      >
-                        ✤
-                      </span>
-                      {service.title}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails
-                    sx={{
-                      padding: "0 16px 8px 16px",
-                      maxWidth: "120%",
-                      ml: "1%",
-                    }}
-                  >
-                    <List
-                      sx={{
-                        padding: 0,
-                        "& .MuiListItem-root": {
-                          padding: "4px 0",
-                        },
-                      }}
-                    >
-                      {service.details.map((detail, index) => (
-                        <ListItem
-                          key={index}
-                          className={isSpecified ? "tablet-service-item" : ""}
-                        >
-                          <ListItemIcon sx={{ minWidth: 25 }}>
-                            <Circle size={6} color="#fff" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={detail}
-                            primaryTypographyProps={{
-                              sx: {
-                                fontSize: isSpecified ? "0.8rem" : "0.9rem",
-                              },
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-                <GradientDivider
-                  className={
-                    isSpecified ? "tablet-gradient-divider" : "gradient-divider"
-                  }
-                />
-              </Box>
-            ))}
-
-            {!isSpecified && (
-              <Box
-                ref={circleRef}
-                sx={{
-                  position: "absolute",
-                  width: 20,
-                  height: 30,
-                  background:
-                    "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
-                  borderRadius: "50%",
-                  zIndex: 2,
-                  boxShadow: "0 0 20px rgba(255, 87, 34, 0.5)",
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            )}
-          </Box>
-          <Box sx={{ mt: 10 }}>
-            <MarqueeCarousel1 />
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
 
   if (isTablet) {
     return (
@@ -732,7 +613,7 @@ const AIAutomation = forwardRef((props, ref) => {
               fontSize: "2rem",
               background: "linear-gradient(90deg,#2579e3, #8e54f7)",
               WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              color: "transparent",
             }}
           >
             AI and Automation
@@ -747,87 +628,92 @@ const AIAutomation = forwardRef((props, ref) => {
             <Typography
               variant="h6"
               sx={{
-                textAlign: "center",
+                textAlign: expanded ? "left" : "center",
                 fontSize: "1.2rem",
                 width: "100%",
-                mb: 1,
               }}
             >
               {services[0].title}
             </Typography>
-
-            {/* Collapsible section for remaining services */}
-            <Collapse in={expanded} timeout="auto">
-              <Box sx={{ width: "100%" }}>
-                {services.slice(1).map((service, index) => (
-                  <Box key={index} sx={{ mt: 3, width: "100%" }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        textAlign: "left",
-                        fontSize: "1.2rem",
-                        mb: 1,
+            <Collapse in={expanded}>
+              <List sx={{ width: "100%" }}>
+                {services[0].details.map((detail, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{
+                      alignItems: "flex-start",
+                      py: 1,
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
+                      <Circle size={8} color="#8E54F7" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={detail}
+                      primaryTypographyProps={{
+                        sx: {
+                          fontSize: "0.95rem",
+                          ml: -1,
+                          color: "rgba(255, 255, 255, 0.85)",
+                        },
                       }}
-                    >
-                      {service.title}
-                    </Typography>
-                    <List>
-                      {service.details.map((detail, detailIndex) => (
-                        <ListItem
-                          key={detailIndex}
-                          sx={{
-                            alignItems: "flex-start",
-                            py: 1,
-                          }}
-                        >
-                          <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
-                            <Circle size={8} color="#8E54F7" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={detail}
-                            primaryTypographyProps={{
-                              sx: {
-                                fontSize: "0.95rem",
-                                ml: -1,
-                                color: "rgba(255, 255, 255, 0.85)",
-                              },
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Box>
+                    />
+                  </ListItem>
                 ))}
-              </Box>
+              </List>
+              {services.slice(1).map((service, index) => (
+                <Box key={index} sx={{ mt: 2, width: "100%" }}>
+                  <Typography variant="h6" sx={{ textAlign: "left" }}>
+                    {service.title}
+                  </Typography>
+                  <List>
+                    {service.details.map((detail, index) => (
+                      <ListItem
+                        key={index}
+                        sx={{
+                          alignItems: "flex-start",
+                          py: 1,
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: "24px", mt: 1.5 }}>
+                          <Circle size={8} color="#8E54F7" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={detail}
+                          primaryTypographyProps={{
+                            sx: {
+                              fontSize: "0.95rem",
+                              ml: -1,
+                              color: "rgba(255, 255, 255, 0.85)",
+                            },
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              ))}
             </Collapse>
-
-            {/* View More/Less Button */}
-            <Button
-              onClick={() => setExpanded(!expanded)}
-              sx={{
-                color: "#8E54F7",
-                textTransform: "none",
-                fontSize: "1rem",
-                mt: 1,
-                mb: 1,
-                "&:hover": {
-                  background: "transparent",
-                  opacity: 0.8,
-                },
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
+            <Box
+              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
             >
-              {expanded ? "View Less" : "View More"}
-              <ChevronDown
-                size={20}
-                style={{
-                  transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
+              <Button
+                onClick={() => setExpanded(!expanded)}
+                sx={{
+                  color: "#8E54F7",
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  p: 0,
+                  m: 2,
+                  "&:hover": {
+                    background: "transparent",
+                    opacity: 0.8,
+                  },
                 }}
-              />
-            </Button>
+              >
+                {expanded ? "View Less" : "View More"}
+              </Button>
+            </Box>
           </CardContent>
         </Card>
         <Box sx={{ mt: 5 }}>
@@ -839,22 +725,21 @@ const AIAutomation = forwardRef((props, ref) => {
 
   return (
     <Box
+      ref={sectionRef}
       className="services-container"
       sx={{
         width: "100%",
-        minHeight: "120vh",
+        minHeight: "100vh",
         position: "relative",
-        marginBottom: "5rem",
       }}
     >
       <Box
         className="fade-in-heading"
         sx={{
-          position: "absolute",
+          position: "relative",
           top: 0,
           left: 0,
           width: "100%",
-          height: "100vh",
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -875,7 +760,7 @@ const AIAutomation = forwardRef((props, ref) => {
             variant="h4"
             sx={{ textAlign: "center", fontWeight: "500", mt: 2 }}
           >
-            Empower your business with AI
+            Empower Your Business With AI
           </Typography>
         </Box>
       </Box>
@@ -883,35 +768,40 @@ const AIAutomation = forwardRef((props, ref) => {
       <Box
         className="animate-content"
         sx={{
-          position: "absolute",
+          position: "relative",
           top: 0,
           left: 0,
           width: "100%",
-          height: "100vh",
-          padding: "2rem",
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "rgba(0, 0, 0, 0.1)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "rgba(37, 121, 227, 0.5)",
-            borderRadius: "4px",
+          padding: {
+            md: "0 2%",
           },
         }}
       >
         <Box
           sx={{
-            maxWidth: "1200px",
-            margin: "0 auto",
+            maxWidth: "100%",
             position: "relative",
-            pb: "2rem",
+            zIndex: 1,
           }}
         >
           <Typography
             variant="h6"
-            sx={{ color: "gray" }}
+            sx={{
+              color: "grey.500",
+              ml: {
+                md: "3%",
+              },
+              mb: {
+                md: "1%",
+                lg: "2%",
+                xl: "1.5%",
+              },
+              fontSize: {
+                md: `clamp(0.5rem, calc(0.5rem + 1vw), 1.5rem)`,
+                lg: `clamp(0.5rem, calc(0.8rem + 1vw), 2rem)`,
+                xl: `clamp(0.5rem, calc(0.5rem + 1vw), 3rem)`,
+              },
+            }}
             className="services-title"
           >
             AI & Automation
@@ -926,23 +816,52 @@ const AIAutomation = forwardRef((props, ref) => {
                   color: "#fff",
                   boxShadow: "none",
                   "&.Mui-expanded": {
-                    margin: 0,
+                    marginRight: {
+                      md: "0%",
+                      lg: "0%",
+                      xl: "0%",
+                    },
                   },
                 }}
               >
                 <AccordionSummary
-                  expandIcon={<ChevronDown style={{ color: "#fff" }} />}
+                  expandIcon={
+                    <ChevronDown style={{ color: "#fff", marginRight: "0%" }} />
+                  }
                   sx={{
-                    "&.Mui-expanded": {
-                      minHeight: 105,
-                      margin: 0,
+                    width: {
+                      md: "95%",
                     },
-                    minHeight: 105,
+                    height: {
+                      md: "clamp(70px, 12vh, 200px)",
+                      lg: "clamp(70px, 12vh, 200px)",
+                      xl: "clamp(80px, 13vh, 220px)",
+                    },
+                    minHeight: "auto",
+                    "&.Mui-expanded": {
+                      minHeight: {
+                        md: 70,
+                        lg: 120,
+                        xl: 140,
+                      },
+                    },
                   }}
                 >
                   <Typography
                     variant="h5"
-                    sx={{ fontSize: "1.7rem", position: "relative" }}
+                    sx={{
+                      fontSize: {
+                        md: `clamp(0.5rem, calc(0.5rem + 1vw), 1.5rem)`,
+                        lg: `clamp(0.5rem, calc(0.8rem + 1vw), 2rem)`,
+                        xl: `clamp(0.5rem, calc(0.5rem + 1vw), 3rem)`,
+                      },
+                      position: "relative",
+                      marginLeft: {
+                        md: "2%",
+                        lg: "2.5%",
+                        xl: "2.5%",
+                      },
+                    }}
                   >
                     <span
                       ref={(el) => (symbolRefs.current[index] = el)}
@@ -954,29 +873,41 @@ const AIAutomation = forwardRef((props, ref) => {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails
+                  ref={index === services.length - 1 ? lastAccordionRef : null}
                   sx={{
-                    padding: "0 16px 8px 16px",
-                    maxWidth: "120%",
-                    ml: "1%",
+                    maxWidth: "100%",
+                    ml: {
+                      md: "4%",
+                      lg: "4.5%",
+                      xl: "5%",
+                    },
                   }}
                 >
                   <List
                     sx={{
                       padding: 0,
                       "& .MuiListItem-root": {
-                        padding: "4px 0",
+                        padding: {
+                          md: "4px 0px",
+                        },
                       },
                     }}
                   >
                     {service.details.map((detail, index) => (
                       <ListItem key={index}>
-                        <ListItemIcon sx={{ minWidth: 25 }}>
+                        <ListItemIcon>
                           <Circle size={8} color="#fff" />
                         </ListItemIcon>
                         <ListItemText
                           primary={detail}
                           primaryTypographyProps={{
-                            sx: { fontSize: "1.1rem" },
+                            sx: {
+                              fontSize: {
+                                md: `clamp(0.5rem, calc(0.3rem + 1vw), 1.5rem)`,
+                                lg: `clamp(0.5rem, calc(0.3rem + 1vw), 1.5rem)`,
+                                xl: `clamp(0.5rem, calc(0.3rem + 1vw), 1.5rem)`,
+                              },
+                            },
                           }}
                         />
                       </ListItem>
@@ -987,13 +918,20 @@ const AIAutomation = forwardRef((props, ref) => {
               {index < services.length && <GradientDivider />}
             </React.Fragment>
           ))}
-
           <Box
             ref={circleRef}
             sx={{
               position: "absolute",
-              width: 30,
-              height: 30,
+              width: {
+                xs: 20,
+                sm: 25,
+                md: 30,
+              },
+              height: {
+                xs: 20,
+                sm: 25,
+                md: 30,
+              },
               background: "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
               borderRadius: "50%",
               zIndex: 2,
@@ -1002,7 +940,20 @@ const AIAutomation = forwardRef((props, ref) => {
             }}
           />
         </Box>
-        <Box sx={{ mt: 10, ml: "-5%" }}>
+        <Box
+          sx={{
+            mt: {
+              md: 10,
+              lg: 12,
+              xl: 14,
+            },
+            ml: {
+              md: "-5%",
+              lg: "-6%",
+              xl: "-7%",
+            },
+          }}
+        >
           <MarqueeCarousel1 />
         </Box>
       </Box>

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useTheme, useMediaQuery } from "@mui/material";
 import * as THREE from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
@@ -10,6 +11,19 @@ const FONT_URL =
 const ThreeDE = ({ onComplete }) => {
   const mountRef = useRef(null);
   const textRef = useRef(null);
+  const theme = useTheme();
+  const isMd = useMediaQuery(theme.breakpoints.up("md"));
+  const isLg = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXl = useMediaQuery(theme.breakpoints.up("xl"));
+
+  let textSize;
+  if (isXl) {
+    textSize = "34.5";
+  } else if (isLg) {
+    textSize = "34.5";
+  } else if (isMd) {
+    textSize = "34.5";
+  }
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -36,7 +50,7 @@ const ThreeDE = ({ onComplete }) => {
       (font) => {
         const textGeometry = new TextGeometry("e", {
           font,
-          size: 33,
+          size: textSize,
           height: 2,
           bevelEnabled: true,
           bevelThickness: 3,
@@ -149,15 +163,14 @@ const ThreeDE = ({ onComplete }) => {
         }
       }
     };
-  }, []);
+  }, [textSize]);
 
   return (
     <div
       ref={mountRef}
       style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
+        width: `calc(100vh - 10%)`,
+        height: `calc(100vh - 10%)`,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "transparent",

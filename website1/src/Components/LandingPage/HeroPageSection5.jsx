@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Typography,
@@ -22,8 +22,8 @@ const HeroPageSection5 = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const is1024px = useMediaQuery("(max-width: 1024px)");
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const cards = [
     {
@@ -45,7 +45,8 @@ const HeroPageSection5 = () => {
     },
   ];
 
-  useEffect(() => {
+  // GSAP Animation Logic
+  const initializeAnimations = () => {
     if (isDesktop) {
       cardRefs.current.forEach((card, index) => {
         gsap.fromTo(
@@ -66,18 +67,35 @@ const HeroPageSection5 = () => {
         );
       });
     }
+  };
+
+  // Handle Window Resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+      ScrollTrigger.refresh(); // Refresh ScrollTrigger to recalculate positions
+      initializeAnimations(); // Reinitialize animations
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isDesktop]);
+
+  // Initialize animations on mount and when isDesktop changes
+  useEffect(() => {
+    initializeAnimations();
   }, [isDesktop]);
 
   return (
     <Box
       ref={sectionRef}
       sx={{
-        minHeight: "70vh",
+        minHeight: { md: "100vh", xl: "100vh" },
         fontFamily: '"Inter", sans-serif',
         position: "relative",
         bgcolor: "#000",
-        pt: { xs: 4, sm: 6, md: 6 },
-        pb: { xs: 4, sm: 6, md: 8 },
+        pt: { xs: 4, sm: 6, md: 0 },
+        pb: { xs: 4, sm: 6, md: 0 },
       }}
     >
       {/* Background gradient */}
@@ -96,19 +114,27 @@ const HeroPageSection5 = () => {
         }}
       />
       {/* Title Section */}
-      <Box sx={{ marginBottom: "3rem" }}>
+      <Box sx={{ marginBottom: { md: "5%", xl: "7.5%" } }}>
         <Typography
           sx={{
+            color: "#fff",
+            fontWeight: 600,
+            lineHeight: 1.167,
+            letterSpacing: "-0.01562em",
+            fontSize: {
+              md: `clamp(1.75rem, calc(1.25rem + 2vw), 9rem)`,
+              lg: `clamp(1.75rem, calc(1.37rem + 2.5vw), 8rem)`,
+              xl: `clamp(2.25rem, calc(2rem + 2.5vw), 10rem)`,
+            },
+            position: "relative",
+            top: "20px",
+            background: "black",
             textAlign: "center",
           }}
-          variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
-          fontWeight="bold"
-          fontSize= {isMobile ? "2rem" : isTablet ? "3rem" : "4.5rem"}
         >
           How We{" "}
           <Box
             component="span"
-            variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
             fontWeight="bold"
             sx={{
               background: "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",

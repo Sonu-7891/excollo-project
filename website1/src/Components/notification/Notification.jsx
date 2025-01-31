@@ -1,35 +1,40 @@
-// src/components/GradientBallNotification/index.jsx
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import { keyframes } from "@mui/system";
+import { Box, keyframes } from "@mui/material";
 
-const pulse = keyframes`
-  0% {
-    transform: scale(1);
+const moveUpDown = keyframes`
+  0%  {
+    transform: translateY(-8px) scale(1);
+    opacity: 1;
   }
   50% {
-    transform: scale(1.05);
+    transform: translateY(-42px) scale(1.1);
+    opacity: 0.5;
   }
   100% {
-    transform: scale(1);
+    transform: translateY(-42px) scale(0);
+    opacity: 0;
   }
 `;
 
-const GradientBallNotification = ({
-  timeout = 8000,
-  position = { bottom: 50, left: 50 },
-}) => {
+const GradientBallNotification = ({ timeout = 2000 }) => {
   const [showNotification, setShowNotification] = useState(false);
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [isHovered, setIsHovered] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+      setLastActivity(Date.now());
+      setShowNotification(false);
+    };
+
     const handleActivity = () => {
       setLastActivity(Date.now());
       setShowNotification(false);
     };
 
-    window.addEventListener("mousemove", handleActivity);
+    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("click", handleActivity);
     window.addEventListener("keypress", handleActivity);
     window.addEventListener("scroll", handleActivity);
@@ -42,7 +47,7 @@ const GradientBallNotification = ({
     }, 1000);
 
     return () => {
-      window.removeEventListener("mousemove", handleActivity);
+      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("click", handleActivity);
       window.removeEventListener("keypress", handleActivity);
       window.removeEventListener("scroll", handleActivity);
@@ -51,51 +56,73 @@ const GradientBallNotification = ({
   }, [timeout, lastActivity, isHovered]);
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        bottom: position.bottom,
-        left: position.left,
-        zIndex: 9999,
-        transition: "all 0.7s ease-in-out",
-        transform: showNotification ? "scale(1)" : "scale(0)",
-        opacity: showNotification ? 1 : 0,
-      }}
-    >
+    showNotification && (
       <Box
         sx={{
-          width: 84,
-          height: 84,
-          borderRadius: "50%",
-          background: "linear-gradient(180deg,  #05000A 0%, #1B1125 100%)",
-          boxShadow: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          transition: "transform 0.3s ease",
-          animation: `${pulse} 2s infinite ease-in-out`,
-          "&:hover": {
-            transform: "scale(1.1)",
-          },
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setLastActivity(Date.now());
+          position: "fixed",
+          left: cursorPosition.x - -20,
+          top: cursorPosition.y - 30,
+          zIndex: 9999,
+          transition: "all 0.7s ease-in-out",
         }}
       >
-        <Typography
-          variant="h6"
+        <Box
           sx={{
-            color: "white",
-            fontWeight: 500,
+            width: 30,
+            height: 60,
+            borderRadius: "50px",
+            background:
+              "linear-gradient(135deg, rgba(128,128,128,0.3), rgba(255,255,255,0.1))",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "transform 0.3s ease",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            "&:hover": {
+              transform: "scale(1.1)",
+            },
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            setLastActivity(Date.now());
+          }}
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+            setShowNotification(false);
           }}
         >
-          Scroll
-        </Typography>
+          <Box
+            sx={{
+              position: "relative",
+              width: "20px",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Box
+              sx={{
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                backgroundColor: "white",
+                animation: `${moveUpDown} 1.7s ease-in-out infinite`,
+                position: "absolute",
+                bottom: 0,
+              }}
+            />
+          </Box>
+        </Box>
       </Box>
-    </Box>
+    )
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useCallback} from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -48,7 +48,7 @@ const TitleContainer = styled("div")(({ theme }) => ({
   "& h2": {
     textAlign: "left",
     padding: "55px",
-    fontSize: "4rem",
+    fontSize: "4.25rem",
     fontFamily: '"Inter", sans-serif',
     fontWeight: "bold",
     textUnderlinePosition: "from-font",
@@ -59,18 +59,32 @@ const TitleContainer = styled("div")(({ theme }) => ({
       display: "block",
     },
   },
+  [theme.breakpoints.up("xl")]: {
+    flex: "0 0 400px",
+    "& h2": {
+      fontSize: `clamp(2.25rem, calc(2rem + 2.5vw), 10rem)`,
+      paddingBottom: "-50px",
+    },
+  },
+  [theme.breakpoints.down("xl")]: {
+    flex: "0 0 400px",
+    "& h2": {
+      fontSize: `clamp(1.75rem, calc(1.37rem + 2.5vw), 8rem)`,
+      paddingBottom: "-50px",
+    },
+  },
   [theme.breakpoints.down("lg")]: {
     flex: "0 0 400px",
     "& h2": {
-      fontSize: "3.5rem",
+      fontSize: `clamp(1.75rem, calc(1.25rem + 2vw), 9rem)`,
       paddingBottom: "-50px",
     },
   },
   [theme.breakpoints.down("md")]: {
     width: "100%",
-    marginBottom: "-300px",
+    marginBottom: "-280px",
     "& h2": {
-      fontSize: "2.5rem",
+      fontSize: "2.50rem",
       paddingBottom: "-50px",
       textAlign: "center",
       "& br": {
@@ -89,7 +103,6 @@ const TitleContainer = styled("div")(({ theme }) => ({
 const Card = styled("div")(
   ({ theme, direction = "90deg", isMobile = false }) => ({
     width: "50%",
-    height: "350px",
     background: `linear-gradient(${direction}, rgba(142, 84, 247, 0.5), rgba(51, 46, 108, 0.8), rgba(0, 0, 0, 1))`,
     borderRadius: "60px",
     padding: "30px",
@@ -113,24 +126,31 @@ const Card = styled("div")(
     },
 
     "& p": {
-      fontSize: "1.8rem",
       alignItems: "center",
       justifyContent: "center",
       alignText: "center",
       fontFamily: '"Inter", sans-serif',
       color: "#D1D1E2",
-      lineHeight: 1.6,
+      lineHeight: 1.7,
       fontWeight: 200,
       textAlign: "left",
       padding: 20,
       margin: 15,
     },
 
+    [theme.breakpoints.up("xl")]: {
+      height: "400px",
+      fontSize: `clamp(0.5rem, calc(0.8rem + 0.8vw), 2.1rem)`,
+    },
+
+    [theme.breakpoints.down("xl")]: {
+      height: "300px",
+      fontSize: `clamp(0.5rem, calc(0.8rem + 0.7vw), 1.8rem)`,
+    },
+
     [theme.breakpoints.down("lg")]: {
       height: "200px",
-      "& p": {
-        fontSize: "1.6rem",
-      },
+      fontSize: `clamp(0.5rem, calc(0.8rem + 0.6vw), 1.5rem)`,
     },
 
     [theme.breakpoints.down("md")]: {
@@ -146,7 +166,6 @@ const Card = styled("div")(
         display: isMobile ? "none" : "block",
       },
       "& p": {
-        fontSize: "1.4rem",
         padding: "15px",
         margin: "10px",
         textAlign: "center",
@@ -162,18 +181,14 @@ const Card = styled("div")(
         borderRadius: "31px",
       },
       "& p": {
-        fontSize: "1.2rem",
         padding: "10px",
         margin: "5px",
       },
     },
 
-    "@media (min-width: 769px) and (max-width:1024px) ": {
+    "@media (min-width: 769px) and (max-width:899px) ": {
       width: "95%",
       height: "fit-content",
-      "& p": {
-        fontSize: "1.8rem",
-      },
     },
   })
 );
@@ -181,9 +196,63 @@ const Card = styled("div")(
 const AboutUs = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const isSpecificSize = useMediaQuery(
+    "(min-width: 600px) and (max-width: 899px)"
+  );
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 899px)");
+  const isLandscapeMedium = useMediaQuery(
+    "(min-width: 625px) and (max-width: 899px) and (orientation: landscape)"
+  );
+  const isSpecificMargin = useMediaQuery(
+    "(min-width: 1800px) and (max-width: 2600px)"
+  );
+  const isLaptop = useMediaQuery(theme.breakpoints.up("md"));
+  const isLargeLaptop = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXtraLargeLaptop = useMediaQuery(theme.breakpoints.up("xl"));
 
   const [showButton, setShowButton] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  // Handle window resize and trigger refresh if needed
+  useEffect(() => {
+    let resizeTimer;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      const newWidth = window.innerWidth;
+
+      // Check if we're crossing major breakpoints
+      const oldBreakpoint = getBreakpoint(windowWidth);
+      const newBreakpoint = getBreakpoint(newWidth);
+
+      if (oldBreakpoint !== newBreakpoint) {
+        setShouldRefresh(true);
+      }
+
+      setWindowWidth(newWidth);
+
+      // Debounce the refresh
+      resizeTimer = setTimeout(() => {
+        if (shouldRefresh) {
+          window.location.reload();
+        }
+      }, 1000);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [windowWidth, shouldRefresh]);
+
+  // Helper function to determine breakpoint category
+  const getBreakpoint = (width) => {
+    if (width < 600) return "xs";
+    if (width < 900) return "sm";
+    if (width < 1200) return "md";
+    return "lg";
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -208,7 +277,19 @@ const AboutUs = () => {
       <div>
         <ContentSection>
           <TitleContainer>
-            <h2>Our {!isMobile && <br />} Vision</h2>
+            <h2>
+              Our {!isMobile && <br />}{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Vision{" "}
+              </span>{" "}
+            </h2>
           </TitleContainer>
           <Card>
             <p>
@@ -226,10 +307,23 @@ const AboutUs = () => {
     () => (
       <div>
         <ContentSection>
-          {isMobile || isTablet ? (
+          {isMobile || isTablet || isSpecificSize ? (
             <>
               <TitleContainer>
-                <h2>Our {!isMobile && <br />} Mission</h2>
+                <h2>
+                  Our {!isMobile || (isSpecificSize && <br />)}{" "}
+                  <span
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {" "}
+                    Mission{" "}
+                  </span>
+                </h2>
               </TitleContainer>
               <Card>
                 <p>
@@ -248,7 +342,19 @@ const AboutUs = () => {
               </Card>
               <TitleContainer>
                 <h2>
-                  Our <br /> Mission
+                  <Box sx={{ marginLeft: { md: "40%", lg: "20%", xl: "0" } }}>
+                    Our <br />{" "}
+                    <span
+                      style={{
+                        background:
+                          "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      Mission
+                    </span>
+                  </Box>
                 </h2>
               </TitleContainer>
             </>
@@ -256,7 +362,7 @@ const AboutUs = () => {
         </ContentSection>
       </div>
     ),
-    [isMobile]
+    [isMobile, isTablet, isSpecificSize]
   );
 
   const PhilosophySection = useCallback(
@@ -264,13 +370,27 @@ const AboutUs = () => {
       <div>
         <ContentSection>
           <TitleContainer>
-            <h2>Our {!isMobile && <br />} Philosophy</h2>
+            <h2>
+              Our {!isMobile && <br />}{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Philosophy
+              </span>
+            </h2>
           </TitleContainer>
+
           <Card>
             <p>
               At Excollo, we commit to results, not just solutions. Our "Outcome
-              as a Service" (OaaS) approach ensures every action is aligned to
-              achieve measurable success for our clients.
+              as a Service" (OaaS) approach <br />
+              ensures every action is aligned to achieve measurable success for
+              our clients.
             </p>
           </Card>
         </ContentSection>
@@ -282,10 +402,9 @@ const AboutUs = () => {
   return (
     <Box
       sx={{
-        bgcolor: "#000",
         minHeight: "100vh",
         fontFamily: '"Inter", sans-serif',
-        overflow: "hidden", 
+        overflowX: "hidden",
       }}
     >
       <Box
@@ -302,125 +421,149 @@ const AboutUs = () => {
       <NavBar />
       <Box
         sx={{
-          maxWidth: { xs: "95%", sm: "90%", md: "90%" },
-          margin: { xs: "20px auto", md: "50px auto" },
+          minHeight: isLandscapeMedium ? "120vh" : "100vh",
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: "center",
+          width: "100%",
+          position: "relative",
         }}
       >
         <Box
           sx={{
-            minHeight: { xs: "auto", md: "50vh" },
+            maxWidth: { xs: "95%", sm: "90%", md: "85%", lg: "85%", xl: "85%" },
+            margin: isLandscapeMedium
+              ? "120px auto 60px"
+              : { xs: "20px auto", md: "0px auto" },
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             alignItems: "center",
-            mt: { xs: "10%", md: "-15%", lg: "-14%" },
-            mb: { xs: 0, md: 0 },
           }}
         >
-          <Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                alignItems: { xs: "center", md: "flex-start" },
-              }}
-            >
-              <Typography
-                variant="h2"
+          <Box
+            sx={{
+              minHeight: isLandscapeMedium
+                ? "auto"
+                : { xs: "auto", md: "auto" },
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: "center",
+              mt: isLandscapeMedium
+                ? "0"
+                : { xs: "10%", md: "-10%", lg: "-10%" },
+              mb: { xs: 0, md: 0 },
+              position: "relative",
+            }}
+          >
+            <Box sx={{ width: { md: "70%", lg: "70%", xl: "70%" } }}>
+              <Box
                 sx={{
-                  textAlign: { xs: "center", md: "left" },
-                  fontSize: {
-                    xs: "2.5rem",
-                    sm: "3rem",
-                    md: "3.5rem",
-                    lg: "4rem",
-                  },
-                  fontFamily: '"Inter", sans-serif',
-                  fontWeight: "600",
-                  color: "#fff",
-                  whiteSpace: "nowrap", // Prevent line break on larger screens
-                  ml: { xs: 0, md: "13%", lg: "12%" },
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  alignItems: { xs: "center", md: "flex-start" },
+                  marginBottom: isLandscapeMedium ? "40px" : undefined,
                 }}
               >
-                <span className="highlight">About</span>
-              </Typography>
-
-              <Typography
-                variant="h2"
-                sx={{
-                  textAlign: { xs: "center", md: "left" },
-                  fontSize: {
-                    xs: "2.5rem",
-                    sm: "3rem",
-                    md: "3.5rem",
-                    lg: "4rem",
-                  },
-                  fontFamily: '"Inter", sans-serif',
-                  fontWeight: "600",
-                  color: "#fff",
-                  whiteSpace: "nowrap", // Prevent line break on larger screens
-                  ml: { xs: 0, md: "2%", lg: "1.5%" },
-                }}
-              >
-                <span
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
+                <Typography
+                  variant="h2"
+                  sx={{
+                    textAlign: { xs: "center", md: "left" },
+                    fontSize: {
+                      md: `clamp(1.75rem, calc(1.25rem + 2.5vw), 9rem)`,
+                      lg: `clamp(1.75rem, calc(1.37rem + 3vw), 8rem)`,
+                      xl: `clamp(2.25rem, calc(2rem + 3vw), 10rem)`,
+                    },
+                    fontFamily: '"Inter", sans-serif',
+                    fontWeight: "600",
+                    color: "#fff",
+                    whiteSpace: "nowrap", // Prevent line break
+                    ml: isLandscapeMedium ? "5%" : 0,
                   }}
                 >
-                  Excollo
-                </span>
+                  <span className="highlight">About </span>
+                  <span
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #2579E3 0%, #8E54F7 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    Excollo
+                  </span>
+                </Typography>
+              </Box>
+
+              <Typography
+                sx={{
+                  maxWidth: isLandscapeMedium ? "90%" : { xs: "100%" },
+                  fontSize: {
+                    md: `clamp(0.5rem, calc(0.8rem + 0.6vw), 1.5rem)`,
+                    lg: `clamp(0.5rem, calc(0.8rem + 0.7vw), 1.8rem)`,
+                    xl: `clamp(0.5rem, calc(0.8rem + 0.8vw), 2.1rem)`,
+                  },
+                  fontWeight: 200,
+                  lineHeight: 1.7,
+                  textAlign: { xs: "center", md: "left" },
+                  ml: isLandscapeMedium ? "5%" : { xs: 0, md: "1%" },
+                  px: { xs: 2, md: 0 },
+                  mt: isLandscapeMedium ? 2 : { xs: 3, md: 5 },
+                }}
+              >
+                Excollo bridges today’s challenges and tomorrow’s opportunities.
+                We harness cutting-edge technology, AI, and tailored solutions
+                to deliver outcomes and make businesses future-ready.
               </Typography>
             </Box>
 
-            <Typography
-              sx={{
-                maxWidth: { xs: "100%", md: "70%" },
-                fontSize: {
-                  xs: "1.1rem",
-                  sm: "1.2rem",
-                  md: "1.3rem",
-                  lg: "1.3rem",
-                },
-                fontWeight: 200,
-                lineHeight: 1.7,
-                textAlign: { xs: "center", md: "left" },
-                ml: { xs: 0, md: "13%", lg: "12.5%" },
-                px: { xs: 2, md: 0 },
-                mt: { xs: 3, md: 5 },
-              }}
-            >
-              Excollo bridges today’s challenges and tomorrow’s opportunities.
-              We harness cutting-edge technology, AI, and tailored solutions to
-              deliver outcomes and make businesses future-ready.
-            </Typography>
+            {!isMobile && !isTablet && (
+              <Box
+                sx={{
+                  width: isLandscapeMedium ? "50%" : { md: "50%", lg: "40%" },
+                  height: "100vh",
+                  display: "flex",
+                  "@media (min-width: 200px) and (max-width: 899px)": {
+                    display: "none",
+                  },
+                  top: 0,
+                  left: 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <ThreeDE />
+                </Box>
+              </Box>
+            )}
           </Box>
-
-          {!isMobile && !isTablet && (
-            <Box
-              sx={{
-                width: { sm: "60%", md: "80%" },
-                mr: { md: "2%", lg: "0%" },
-                "@media (min-width: 200px) and (max-width:900px) ": {
-                  display: "none",
-                },
-              }}
-            >
-              <ThreeDE />
-            </Box>
-          )}
         </Box>
       </Box>
 
-      <VisionSection />
-      <MissionSection />
-      <PhilosophySection sx={{ fontSize: "1rem" }} />
+      <Box
+        sx={{
+          width: "100%",
+          margin: "auto",
+          marginTop: isMobile || isSpecificSize ? "0" : "-8%",
+          display: isMobile || isSpecificSize ? "block" : "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          rowGap: "2rem",
+        }}
+      >
+        <VisionSection />
+        <MissionSection />
+        <PhilosophySection />
+      </Box>
+
       <HowWeWork />
       <Excollo3D />
+
       <Footer />
       <Fade in={showButton}>
         <Button

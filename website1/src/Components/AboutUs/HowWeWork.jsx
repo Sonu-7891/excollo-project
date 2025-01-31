@@ -9,6 +9,7 @@ import {
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
+
 const WorkTable = styled("section")({
   width: "95%",
   margin: "auto",
@@ -17,20 +18,6 @@ const WorkTable = styled("section")({
   "@media (max-width: 768px)": {
     width: "100%",
     padding: "10px",
-  },
-});
-const LineBox = styled("div")({
-  position: "relative",
-  top: 0,
-  marginTop: "12.5%",
-  width: "100.1%",
-  height: "250px",
-  zIndex: 1,
-  backgroundColor: "#000",
-  "@media (max-width: 768px)": {
-    width: "100%",
-    display: "none",
-    height: "150px",
   },
 });
 const TableGrid = styled("div")({
@@ -60,7 +47,7 @@ const TableContent = styled("div")({
   margin: "0 0",
   padding: "30px",
   width: "80.8%",
-  height: "400px",
+  height: "100%",
   opacity: 0,
   transform: "translateY(100%)",
   visibility: "hidden",
@@ -94,14 +81,115 @@ const TableContent = styled("div")({
     lineHeight: 1.6,
     textAlign: "center", // Center-align paragraph text
   },
-  "@media (min-width: 1025px) and (max-width:1440px)": {
-    width: "77.9%",
-    height: "400px",
-    "& h3": {
-      fontSize: "28px",
+  "@media (min-width: 2301px) and (max-width: 2600px)": {
+    width: "87%",
+    height: "600px",
+    "& h3": { margin: "25px auto", fontSize: "48px" },
+    "& p": {
+      fontSize: "32px", // Adjust font size for mobile
+      margin: "10px",
     },
   },
-  "@media (min-width: 769px) and (max-width:1024px)": {
+  "@media (min-width: 2001px) and (max-width: 2300px)": {
+    width: "85%",
+    height: "600px",
+    "& h3": { margin: "25px auto", fontSize: "42px" },
+    "& p": {
+      fontSize: "28px", // Adjust font size for mobile
+      margin: "10px",
+    },
+  },
+  "@media (min-width: 1801px) and (max-width: 2000px)": {
+    width: "84%",
+    height: "550px",
+    "& h3": { margin: "20px auto", fontSize: "36px" },
+    "& p": {
+      fontSize: "24px", // Adjust font size for mobile
+      margin: "8px",
+    },
+  },
+  "@media (min-width: 1600px) and (max-width: 1800px)": {
+    width: "81%",
+    height: "400px",
+    "& h3": { fontSize: "32px" },
+    "& p": {
+      fontSize: "20px", // Adjust font size for mobile
+      margin: "6px",
+    },
+  },
+  "@media (min-width: 1500px) and (max-width: 1600px)": {
+    width: "79%",
+    "& h3": { fontSize: "30px" },
+    "& p": {
+      fontSize: "20px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1400px) and (max-width: 1500px)": {
+    width: "78.2%",
+    "& h3": { fontSize: "30px" },
+    "& p": {
+      fontSize: "20px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1350px) and (max-width: 1399px)": {
+    width: "77.2%",
+    "& h3": { fontSize: "30px" },
+    "& p": {
+      fontSize: "18px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1300px) and (max-width: 1349px)": {
+    width: "76.5%",
+    "& h3": { fontSize: "29px" },
+    "& p": {
+      fontSize: "18px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1250px) and (max-width: 1299px)": {
+    width: "75%",
+    "& h3": { fontSize: "29px" },
+    "& p": {
+      fontSize: "18px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1200px) and (max-width: 1249px)": {
+    width: "73.5%",
+    "& h3": { fontSize: "28px" },
+    "& p": {
+      fontSize: "18px", // Adjust font size for mobile
+      margin: "4px",
+    },
+  },
+  "@media (min-width: 1150px) and (max-width: 1199px)": {
+    width: "72%",
+    "& h3": { fontSize: "28px" },
+  },
+  "@media (min-width: 1100px) and (max-width: 1149px)": {
+    width: "70.5%",
+    "& h3": { fontSize: "27px" },
+  },
+  "@media (min-width: 1050px) and (max-width: 1099px)": {
+    width: "69.5%",
+    "& h3": { fontSize: "27px" },
+  },
+  "@media (min-width: 1000px) and (max-width: 1049px)": {
+    width: "67.8%",
+    "& h3": { fontSize: "26px" },
+  },
+  "@media (min-width: 950px) and (max-width: 999px)": {
+    width: "66%",
+    "& h3": { fontSize: "26px" },
+  },
+  "@media (min-width: 900px) and (max-width: 949px)": {
+    width: "64.5%",
+    "& h3": { fontSize: "25px" },
+  },
+  "@media (min-width: 769px) and (max-width:899px)": {
     width: "62%",
     height: "400px", // Make it 90% of the width for mobile
     // Add margin between cards on mobile
@@ -122,7 +210,9 @@ const TableContent = styled("div")({
     height: "200px", // Make it 90% of the width for mobile
     // Let the height adjust dynamically
     borderRadius: "20px", // Modern rounded corners
-    border: "1px solid #fff", // Remove border for a cleaner look
+    border: "1px solid #7E22CE ",
+    // borderColor: "#7E22CE !important",
+    background: "linear-gradient(180deg, #05000A 0%,#1B1125 50%)", // Remove border for a cleaner look
     textAlign: "center",
     padding: "20px", // Adjust padding for mobile
     marginBottom: "20px", // Add margin between cards on mobile
@@ -147,7 +237,9 @@ const TableContent = styled("div")({
   "@media (max-width: 480px)": {
     width: "90%",
     height: "150px", // Make it 90% of the width for mobile
-    border: "1px solid #fff",
+    border: "1px solid #7E22CE ",
+    // borderColor: "#7E22CE !important",
+    background: "linear-gradient(180deg, #05000A 0%,#1B1125 50%)",
     textAlign: "center",
     marginLeft: "-10px",
     padding: "20px", // Adjust padding for mobile
@@ -189,6 +281,10 @@ const HowWeWork = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isLaptop = useMediaQuery(theme.breakpoints.up("md"));
+  const isLargeLaptop = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXtraLargeLaptop = useMediaQuery(theme.breakpoints.up("xl"));
+
   useEffect(() => {
     if (isMobile || isTablet) return;
     const container = containerRef.current;
@@ -247,20 +343,26 @@ const HowWeWork = () => {
         minHeight: "100vh",
         fontFamily: '"Inter", sans-serif',
         letterSpacing: "-0.00833em",
+        mt: isMobile || isTablet ? "0" : "10%",
+        mb: isMobile || isTablet ? "2rem" : "6rem",
         pb: 2,
-        marginBottom: "-250px",
-        overflow: "hidden",
+        // marginBottom: "-240px",
         "@media (max-width: 768px)": {
           marginBottom: "0",
         },
       }}
     >
       <WorkTable>
-        <Box sx={{ marginBottom: "10rem", marginTop: "10rem" }}>
+        <Box
+          sx={{
+            marginBottom: { xs: "4rem", md: "3rem", lg: "5rem", xl: "10rem" },
+            marginTop: { xs: "4rem", md: "3rem", lg: "5rem", xl: "10rem" },
+          }}
+        >
           <Box
             sx={{
               position: "absolute",
-              top: "-10%",
+              top: "-8%",
               left: "0",
               right: "0%",
               bottom: 0,
@@ -273,18 +375,19 @@ const HowWeWork = () => {
           />
           <Typography
             sx={{
+              color: "#fff",
+              fontWeight: 600,
+              lineHeight: 1.167,
+              letterSpacing: "-0.01562em",
+              fontSize: {
+                md: `clamp(1.75rem, calc(1.25rem + 2vw), 9rem)`,
+                lg: `clamp(1.75rem, calc(1.37rem + 2.5vw), 8rem)`,
+                xl: `clamp(2.25rem, calc(2rem + 2.5vw), 10rem)`,
+              },
+              position: "relative",
+              top: "20px",
               textAlign: "center",
-              "@media (max-width: 768px)": {
-                marginTop: "-1.0rem",
-                fontSize: "3rem",
-              },
-              "@media (max-width: 480px)": {
-                marginTop: "1.0rem",
-                fontSize: "2.5rem",
-              },
             }}
-            variant="h2"
-            fontWeight="bold"
           >
             How We{" "}
             <Box
@@ -342,15 +445,22 @@ const HowWeWork = () => {
                 ref={(el) => (contentRefs.current[index] = el)}
                 className="table-content"
               >
-                <Typography variant="h3">{step.title}</Typography>
-                <Typography variant="body1" sx={{ fontSize: "2rem" }}>
-                  {step.content}
-                </Typography>
+                <Box
+                  sx={{
+                    height: "100%",
+                    width: "100%",
+                    rowGap: "5rem",
+                    mt: isMobile || isTablet ? "auto" : "20%",
+                  }}
+                >
+                  <Typography variant="h3">{step.title}</Typography>
+                  <Typography variant="body1">{step.content}</Typography>
+                </Box>
               </TableContent>
             </Box>
           ))}
         </TableGrid>
-        <LineBox />
+        {/* <LineBox /> */}
       </WorkTable>
     </Box>
   );

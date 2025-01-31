@@ -25,15 +25,29 @@ const HeroPage = () => {
   const [hero1Complete, setHero1Complete] = useState(false);
   const [hero2Complete, setHero2Complete] = useState(false);
   const [hero4Complete, setHero4Complete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const threeDERef = useRef(null);
+  
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isSpecificSize = useMediaQuery(
-    "(max-width: 1024px) and (max-height: 725px)"
-  );
+  const isSpecificSize = useMediaQuery(theme.breakpoints.up("md"));
+  const isLargeScreenSize = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXtraLargeScreenSize = useMediaQuery(theme.breakpoints.up("xl"));
   const isDesktop = !isMobile && !isTablet;
+
+  useEffect(() => {
+    const handleResize = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,7 +92,7 @@ const HeroPage = () => {
       if (isSpecificSize) {
         timeline.to(".threeDE", {
           x: "32%",
-          y: "-4%",
+          y: "0%",
           duration: 1,
           ease: "power2.out",
         });
@@ -97,13 +111,12 @@ const HeroPage = () => {
         ease: "power2.out",
       });
 
-      // Modified animation to have both elements come from left
       timeline.add([
         gsap.fromTo(
           [".navbar", ".hero-content"],
           {
             opacity: 0,
-            x: -100, // Both start from -100px (left side)
+            x: -100,
           },
           {
             opacity: 1,
@@ -120,11 +133,9 @@ const HeroPage = () => {
         ),
       ]);
     } else if (!showThreeDE && !isDesktop) {
-      // For mobile and tablet, set states immediately without animations
       setAnimationComplete(true);
       setHero1Complete(true);
 
-      // Set initial styles without animations
       const navbar = document.querySelector(".navbar");
       const heroContent = document.querySelector(".hero-content");
       const gradientBackground = document.querySelector(".gradient-background");
@@ -143,7 +154,8 @@ const HeroPage = () => {
         gradientBackground.style.opacity = "1";
       }
     }
-  }, [showThreeDE, isSpecificSize, isDesktop]);
+    ScrollTrigger.refresh();
+  }, [showThreeDE, isSpecificSize, isTablet, isMobile, isDesktop]);
 
   useEffect(() => {
     if (hero1Complete && isDesktop) {
@@ -168,43 +180,62 @@ const HeroPage = () => {
         }
       );
 
-      if (isSpecificSize) {
+      if (isXtraLargeScreenSize) {
         gsap.to(threeDERef.current, {
           scrollTrigger: {
             trigger: ".hero-section-2",
             start: "top center",
-            end: "bottom center",
+            end: "center center",
             scrub: true,
           },
           motionPath: {
             path: [
-              { x: "33%", y: "2%" },
+              { x: "33%", y: "0%" },
               { x: "12%", y: "50%" },
               { x: "-23vw", y: "90vh" },
             ],
             curviness: 1.5,
           },
-          duration: 1.5,
-          ease: "power2.out",
+          duration: 3,
+          ease: "power6.out",
         });
-      } else {
+      } else if (isLargeScreenSize) {
         gsap.to(threeDERef.current, {
           scrollTrigger: {
             trigger: ".hero-section-2",
             start: "top center",
-            end: "bottom center",
+            end: "center center",
             scrub: true,
           },
           motionPath: {
             path: [
-              { x: "28%", y: "2%" },
+              { x: "33%", y: "0%" },
               { x: "12%", y: "50%" },
-              { x: "-23vw", y: "89vh" },
+              { x: "-23vw", y: "92vh" },
             ],
             curviness: 1.5,
           },
-          duration: 1.5,
-          ease: "power2.out",
+          duration: 3,
+          ease: "power6.out",
+        });
+      } else if (isSpecificSize) {
+        gsap.to(threeDERef.current, {
+          scrollTrigger: {
+            trigger: ".hero-section-2",
+            start: "top center",
+            end: "center center",
+            scrub: true,
+          },
+          motionPath: {
+            path: [
+              { x: "33%", y: "0%" },
+              { x: "12%", y: "50%" },
+              { x: "-23vw", y: "102vh" },
+            ],
+            curviness: 1.5,
+          },
+          duration: 3,
+          ease: "power6.out",
         });
       }
 
@@ -212,10 +243,8 @@ const HeroPage = () => {
         ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       };
     } else if (hero1Complete && !isDesktop) {
-      // Set hero2Complete immediately for mobile/tablet
       setHero2Complete(true);
 
-      // Set initial styles for hero-section-2
       const heroSection2 = document.querySelector(".hero-section-2");
       if (heroSection2) {
         heroSection2.style.opacity = "1";
@@ -223,45 +252,6 @@ const HeroPage = () => {
       }
     }
   }, [hero1Complete, isDesktop, isSpecificSize]);
-
-  useEffect(() => {
-    if (hero2Complete && isDesktop) {
-      gsap.fromTo(
-        ".hero-page-section-4",
-        {
-          opacity: 0,
-          y: 100,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".hero-page-section-4",
-            start: "top center",
-            end: "bottom center",
-            toggleActions: "play none none reverse",
-            onEnter: () => {
-              setHero4Complete(true);
-            },
-            preventOverlaps: true,
-            fastScrollEnd: true,
-          },
-        }
-      );
-    } else if (hero2Complete && !isDesktop) {
-      // Set hero4Complete immediately for mobile/tablet
-      setHero4Complete(true);
-
-      // Set initial styles for hero-page-section-4
-      const heroSection4 = document.querySelector(".hero-page-section-4");
-      if (heroSection4) {
-        heroSection4.style.opacity = "1";
-        heroSection4.style.transform = "translateY(0)";
-      }
-    }
-  }, [hero2Complete, isDesktop]);
 
   const handleScrollToTop = () => {
     const section4 = document.querySelector(".hero-page-section-4");
@@ -328,8 +318,8 @@ const HeroPage = () => {
           width: "100vw",
           height: "100vh",
           display: isMobile || isTablet ? "none" : "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: "left",
+          alignItems: "left",
           position: "absolute",
           top: 0,
           left: 0,
@@ -392,32 +382,42 @@ const HeroPage = () => {
         sx={{
           position: "relative",
           zIndex: 3,
-          opacity: isMobile || isTablet ? 1 : 0,
-          transform: "translateX(50%)",
+          ...(isMobile || isTablet
+            ? {
+                opacity: 1,
+                transform: "none",
+              }
+            : {
+                opacity: 1,
+                transform: "translateX(50%)",
+              }),
         }}
       >
         <HeroPageSection2 onAnimationComplete={() => setHero2Complete(true)} />
       </Box>
-      <Box className="hero-page-section-3" sx={{ opacity: 1 }}>
+      <Box sx={{ marginTop: { md: "-10%", xl: "-7%" } }}>
+        {" "}
+        {/* Apply consistent spacing */}
         <HeroPageSection3 />
       </Box>
-      <Box
-        className="hero-page-section-4"
-        sx={{
-          opacity: isMobile || isTablet ? 1 : 0,
-          transform: isMobile || isTablet ? "translateY(0)" : "translateY(0)",
-          
-        }}
-      >
-        <HeroPageSection4 onComplete={() => setHero4Complete(true)} />
+      <Box sx={{ marginTop: { md: "-8%", lg: "1%", xl: "0%" } }}>
+        {" "}
+        {/* Apply consistent spacing */}
+        <HeroPageSection4 />
       </Box>
-      <Box>
+      <Box sx={{ marginTop: { md: "2%", lg: "5%", xl: "3%" } }}>
+        {" "}
+        {/* Apply consistent spacing */}
         <HeroPageSection5 />
       </Box>
-      <Box>
+      <Box sx={{ marginTop: { md: "-3%", lg: "2%", xl: "0%" } }}>
+        {" "}
+        {/* Apply consistent spacing */}
         <HeroPageSection6 />
       </Box>
-      <Box>
+      <Box sx={{ marginTop: { md: "-3%", lg: "0%", xl: "7%" } }}>
+        {" "}
+        {/* Apply consistent spacing */}
         <HeroPageSection7 />
       </Box>
       <Footer />
