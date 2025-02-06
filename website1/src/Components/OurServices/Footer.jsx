@@ -279,13 +279,7 @@ const Footer = () => {
                     alt="excollo"
                     loading="lazy"
                     style={{
-                      width: {
-                        xs: "50%",
-                        sm: "50%",
-                        md: "50%",
-                        lg: "50%",
-                        xl: specificCondition ? "70%" : "50%",
-                      },
+                      width: specificCondition ? "100%" : "50%",
                     }}
                   />
                 </Link>

@@ -90,7 +90,7 @@ const HeroPageSection5 = () => {
     <Box
       ref={sectionRef}
       sx={{
-        minHeight: { md: "100vh", xl: "100vh" },
+        minHeight: { md: "80vh", xl: "100vh" },
         fontFamily: '"Inter", sans-serif',
         position: "relative",
         bgcolor: "#000",
@@ -114,7 +114,21 @@ const HeroPageSection5 = () => {
         }}
       />
       {/* Title Section */}
-      <Box sx={{ marginBottom: { md: "5%", xl: "7.5%" } }}>
+      <Box sx={{ marginBottom: { md: "0%", xl: "1%" } }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "-20%",
+            left: "0",
+            right: "0%",
+            bottom: 0,
+            height: "50%",
+            background: `radial-gradient(closest-corner, rgba(115, 80, 190, 0.28) 0%, rgba(0, 0, 0, 0) 50%)`,
+            zIndex: 999,
+            pointerEvents: "none",
+            transformOrigin: "center center",
+          }}
+        />
         <Typography
           sx={{
             color: "#fff",
@@ -122,12 +136,13 @@ const HeroPageSection5 = () => {
             lineHeight: 1.167,
             letterSpacing: "-0.01562em",
             fontSize: {
+              xs: `clamp(1.75rem, calc(1.15rem + 2vw), 9rem)`,
               md: `clamp(1.75rem, calc(1.25rem + 2vw), 9rem)`,
               lg: `clamp(1.75rem, calc(1.37rem + 2.5vw), 8rem)`,
               xl: `clamp(2.25rem, calc(2rem + 2.5vw), 10rem)`,
             },
             position: "relative",
-            top: "20px",
+            top: "0px",
             background: "black",
             textAlign: "center",
           }}

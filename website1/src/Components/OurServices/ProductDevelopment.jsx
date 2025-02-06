@@ -128,7 +128,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
       const symbol = symbolRefs.current[currentDotIndex];
       const rect = symbol.getBoundingClientRect();
       const parentRect = symbol
-        .closest(".services-container")
+        .closest(".services-container-4")
         .getBoundingClientRect();
 
       let topOffset = rect.top - parentRect.top + rect.height / 2 - 170;
@@ -167,6 +167,10 @@ const ProductDevelopment = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!isMobile && !isTablet) {
+      const screenHeight = window.innerHeight;
+
+      // Define y values relative to screen height
+      const yValue = screenHeight * 0.13;
       gsap.set(".animate-content-4", {
         x: "100%",
         opacity: 0,
@@ -174,20 +178,29 @@ const ProductDevelopment = forwardRef((props, ref) => {
 
       gsap.set(".services-title-4", {
         opacity: 0,
-        y: 20,
+        y: yValue,
       });
 
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".services-container-4",
+          start: "center center",
+          end: "+=200%",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        },
+      });
 
       tl.fromTo(
         ".fade-in-heading-4",
         {
           opacity: 1,
-          y: 300,
+          y: yValue * 4,
         },
         {
           opacity: 1,
-          y: 300,
+          y: yValue * 4,
           duration: 1,
           scrollTrigger: {
             trigger: ".fade-in-heading-4",
@@ -200,22 +213,25 @@ const ProductDevelopment = forwardRef((props, ref) => {
         .to(".fade-in-heading-4", {
           x: "-100%",
           opacity: 1,
+          delay: 2,
+          duration: 5,
           scrollTrigger: {
             trigger: ".fade-in-heading-4",
-            start: "top 40%",
-            end: "top 35%",
-            scrub: 1,
+            start: "center 5%",
+            end: "center 0%",
+            scrub: 2,
           },
         })
         .to(".animate-content-4", {
           x: "0%",
           opacity: 1,
-          delay: 1,
+          delay: 2,
+          duration: 5,
           scrollTrigger: {
             trigger: ".animate-content-4",
-            start: "top 20%",
-            end: "top 10%",
-            scrub: 1,
+            start: "center 10%",
+            end: "center 10%",
+            scrub: 2,
           },
         })
         .to(".services-title-4", {
@@ -225,8 +241,8 @@ const ProductDevelopment = forwardRef((props, ref) => {
           delay: 0.3,
           scrollTrigger: {
             trigger: ".services-title-4",
-            start: "top 10%",
-            end: "top 10%",
+            start: "center 10%",
+            end: "center 10%",
             scrub: 1,
           },
         });
@@ -363,7 +379,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
         height: "1px",
         width: "125%",
         ml: "-13%",
-        background: "linear-gradient(90deg, #2579e3 0%, #8e54f7 100%)",
+        background: "linear-gradient(90deg, #2579E3 0%, #8E54F7 100%)",
         mb: 2,
         mt: 3,
         opacity: 1,
@@ -413,7 +429,11 @@ const ProductDevelopment = forwardRef((props, ref) => {
             <Box>
               <Typography
                 variant="h1"
-                sx={{ fontWeight: "500", textAlign: "center" }}
+                sx={{
+                  fontWeight: "500",
+                  fontSize: `clamp(1rem, calc(1.3rem + 2vw), 9rem)`,
+                  textAlign: "center",
+                }}
               >
                 Product Development
               </Typography>
@@ -462,7 +482,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
                   backgroundClip: "text",
                   textFillColor: "transparent",
                   textAlign: "center",
-                  fontSize: "2.8rem",
+                  fontSize: `clamp(1rem, calc(1rem + 2vw), 9rem)`,
                   fontWeight: 500,
                   mb: 4,
                 }}
@@ -498,7 +518,8 @@ const ProductDevelopment = forwardRef((props, ref) => {
                     <Typography
                       variant="h6"
                       sx={{
-                        fontSize: isTablet ? "1.1rem" : "1.7rem",
+                        fontSize: `clamp(1rem, calc(0.6rem + 1vw), 9rem)`,
+                        fontWeight: 100,
                         position: "relative",
                         ml: isTablet ? -5 : "1%",
                       }}
@@ -508,7 +529,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
                         ref={(el) => (symbolRefs.current[index] = el)}
                         style={{ display: "inline-block" }}
                       >
-                        ✤
+                        ➢
                       </span>
                       {service.title}
                     </Typography>
@@ -539,7 +560,10 @@ const ProductDevelopment = forwardRef((props, ref) => {
                           <ListItemText
                             primary={detail}
                             primaryTypographyProps={{
-                              sx: { fontSize: isTablet ? "0.8rem" : "0.9rem" },
+                              sx: {
+                                fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
+                                fontWeight: 100,
+                              },
                             }}
                           />
                         </ListItem>
@@ -594,12 +618,11 @@ const ProductDevelopment = forwardRef((props, ref) => {
           }}
         >
           <Typography
-            variant="h3"
             sx={{
               textAlign: "center",
               m: 3,
               mb: 1,
-              fontSize: "2rem",
+              fontSize: `clamp(1.5rem, calc(1rem + 2vw), 9rem)`,
               background: "linear-gradient(90deg,#2579e3, #8e54f7)",
               WebkitBackgroundClip: "text",
               color: "transparent",
@@ -615,11 +638,11 @@ const ProductDevelopment = forwardRef((props, ref) => {
             }}
           >
             <Typography
-              variant="h6"
               sx={{
                 textAlign: expanded ? "left" : "center",
-                fontSize: "1.2rem",
+                fontSize: `clamp(1rem, calc(0.7rem + 1vw), 9rem)`,
                 width: "100%",
+                fontWeight: 100,
               }}
             >
               {services[0].title}
@@ -641,7 +664,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
                       primary={detail}
                       primaryTypographyProps={{
                         sx: {
-                          fontSize: "0.95rem",
+                          fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
                           ml: -1,
                           color: "rgba(255, 255, 255, 0.85)",
                         },
@@ -652,7 +675,13 @@ const ProductDevelopment = forwardRef((props, ref) => {
               </List>
               {services.slice(1).map((service, index) => (
                 <Box key={index} sx={{ mt: 2, width: "100%" }}>
-                  <Typography variant="h6" sx={{ textAlign: "left" }}>
+                  <Typography
+                    sx={{
+                      textAlign: "left",
+                      fontSize: `clamp(1rem, calc(0.7rem + 1vw), 9rem)`,
+                      fontWeight: 100,
+                    }}
+                  >
                     {service.title}
                   </Typography>
                   <List>
@@ -671,7 +700,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
                           primary={detail}
                           primaryTypographyProps={{
                             sx: {
-                              fontSize: "0.95rem",
+                              fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
                               ml: -1,
                               color: "rgba(255, 255, 255, 0.85)",
                             },
@@ -719,7 +748,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
   return (
     <Box
       ref={sectionRef}
-      className="services-container"
+      className="services-container-4"
       sx={{
         width: "100%",
         minHeight: "100vh",
@@ -860,7 +889,7 @@ const ProductDevelopment = forwardRef((props, ref) => {
                       ref={(el) => (symbolRefs.current[index] = el)}
                       style={{ display: "inline-block" }}
                     >
-                      ✤
+                      ➢
                     </span>
                     {service.title}
                   </Typography>

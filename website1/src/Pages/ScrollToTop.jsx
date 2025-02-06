@@ -1,14 +1,21 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigationType } from "react-router-dom";
 
-const ScrollToTop = () => {
-  const location = useLocation();
+const ScrollRestoration = ({ children }) => {
+  const navigationType = useNavigationType();
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Page ko top pe le jao
-  }, [location.pathname]); // Jab bhi route change ho
+    // Only scroll to top if navigation type is POP (browser back/forward)
+    if (navigationType === "POP") {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // or 'auto' for instant scrolling
+      });
+    }
+  }, [navigationType]);
 
-  return null; // Kuch render nahi karna hai
+  return children;
 };
 
-export default ScrollToTop;
+export default ScrollRestoration;

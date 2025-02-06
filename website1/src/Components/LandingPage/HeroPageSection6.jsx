@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
-import AnimatedCTAButton from "../AnimatedCTAButton";
 import AnimatedCTA from "../AnimateCTA";
+
 const HeroPageSection6 = () => {
   const circleRef = useRef(null);
   const containerRef = useRef(null);
@@ -256,8 +256,7 @@ const HeroPageSection6 = () => {
           </Box>
         </Typography>
       </Box>
-      {/* <AnimatedCTAButton onClick={handleClick} /> */}
-      <AnimatedCTA />
+     <AnimatedCTA/>
     </Box>
   );
 };

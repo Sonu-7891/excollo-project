@@ -29,9 +29,13 @@ import MarqueeCarousel1 from "./MarqueeCarousel/MarqueeCarousel1";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SCROLL_THRESHOLD = 50; // Adjust this value to control scroll sensitivity
+const SCROLL_COOLDOWN = 800; // Time in ms before next scroll action
+
 const AIAutomation = forwardRef((props, ref) => {
   const [expanded, setExpanded] = useState(false);
   const [currentDotIndex, setCurrentDotIndex] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
   const symbolRefs = useRef([]);
   const circleRef = useRef(null);
   const lastAccordionRef = useRef(null);
@@ -166,6 +170,11 @@ const AIAutomation = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!isMobile && !isTablet) {
+      const screenHeight = window.innerHeight;
+
+      // Define y values relative to screen height
+      const yValue = screenHeight * 0.13; // 10% of screen height
+
       gsap.set(".animate-content", {
         x: "100%",
         opacity: 0,
@@ -173,20 +182,29 @@ const AIAutomation = forwardRef((props, ref) => {
 
       gsap.set(".services-title", {
         opacity: 0,
-        y: 20,
+        y: yValue, // Dynamic based on screen height
       });
 
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".services-container",
+          start: "center center",
+          end: "+=200%",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        },
+      });
 
       tl.fromTo(
         ".fade-in-heading",
         {
           opacity: 1,
-          y: 300,
+          y: yValue * 4, // Scales dynamically
         },
         {
           opacity: 1,
-          y: 300,
+          y: yValue * 4,
           duration: 1,
           scrollTrigger: {
             trigger: ".fade-in-heading",
@@ -199,22 +217,25 @@ const AIAutomation = forwardRef((props, ref) => {
         .to(".fade-in-heading", {
           x: "-100%",
           opacity: 1,
+          delay: 2,
+          duration: 5,
           scrollTrigger: {
             trigger: ".fade-in-heading",
-            start: "top 40%",
-            end: "top 35%",
-            scrub: 1,
+            start: "center 5%",
+            end: "center 0%",
+            scrub: 2,
           },
         })
         .to(".animate-content", {
           x: "0%",
           opacity: 1,
-          delay: 1,
+          delay: 2,
+          duration: 5,
           scrollTrigger: {
             trigger: ".animate-content",
-            start: "top 20%",
-            end: "top 10%",
-            scrub: 1,
+            start: "center 10%",
+            end: "center 10%",
+            scrub: 2,
           },
         })
         .to(".services-title", {
@@ -224,8 +245,8 @@ const AIAutomation = forwardRef((props, ref) => {
           delay: 0.3,
           scrollTrigger: {
             trigger: ".services-title",
-            start: "top 10%",
-            end: "top 10%",
+            start: "center 10%",
+            end: "center 10%",
             scrub: 1,
           },
         });
@@ -237,10 +258,9 @@ const AIAutomation = forwardRef((props, ref) => {
             trigger: item,
             start: "top bottom-=100",
             toggleActions: "play none none reverse",
-            markers: true,
           },
           opacity: 0,
-          y: 50,
+          y: yValue / 2, // Adjusted dynamically
           duration: 0.6,
           delay: index * 0.1,
         });
@@ -374,7 +394,7 @@ const AIAutomation = forwardRef((props, ref) => {
         height: "1px",
         width: "125%",
         ml: "-13%",
-        background: "linear-gradient(90deg, #2579e3 0%, #8e54f7 100%)",
+        background: "linear-gradient(90deg, #2579E3 0%, #8E54F7 100%)",
         mb: 2,
         mt: 3,
         opacity: 1,
@@ -423,8 +443,11 @@ const AIAutomation = forwardRef((props, ref) => {
           >
             <Box>
               <Typography
-                variant="h1"
-                sx={{ fontWeight: "500", textAlign: "center" }}
+                sx={{
+                  fontWeight: "500",
+                  fontSize: `clamp(1rem, calc(1.3rem + 2vw), 9rem)`,
+                  textAlign: "center",
+                }}
               >
                 AI & Automation
               </Typography>
@@ -473,7 +496,7 @@ const AIAutomation = forwardRef((props, ref) => {
                   backgroundClip: "text",
                   textFillColor: "transparent",
                   textAlign: "center",
-                  fontSize: "2.8rem",
+                  fontSize: `clamp(1rem, calc(1rem + 2vw), 9rem)`,
                   fontWeight: 500,
                   mb: 4,
                 }}
@@ -507,9 +530,9 @@ const AIAutomation = forwardRef((props, ref) => {
                     }}
                   >
                     <Typography
-                      variant="h6"
                       sx={{
-                        fontSize: isTablet ? "1.1rem" : "1.7rem",
+                        fontSize: `clamp(1rem, calc(0.6rem + 1vw), 9rem)`,
+                        fontWeight: 100,
                         position: "relative",
                         ml: isTablet ? -5 : "1%",
                       }}
@@ -519,7 +542,7 @@ const AIAutomation = forwardRef((props, ref) => {
                         ref={(el) => (symbolRefs.current[index] = el)}
                         style={{ display: "inline-block" }}
                       >
-                        ✤
+                        ➢
                       </span>
                       {service.title}
                     </Typography>
@@ -550,7 +573,10 @@ const AIAutomation = forwardRef((props, ref) => {
                           <ListItemText
                             primary={detail}
                             primaryTypographyProps={{
-                              sx: { fontSize: isTablet ? "0.8rem" : "0.9rem" },
+                              sx: {
+                                fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
+                                fontWeight: 100,
+                              },
                             }}
                           />
                         </ListItem>
@@ -605,12 +631,11 @@ const AIAutomation = forwardRef((props, ref) => {
           }}
         >
           <Typography
-            variant="h3"
             sx={{
               textAlign: "center",
               m: 3,
               mb: 1,
-              fontSize: "2rem",
+              fontSize: `clamp(1.5rem, calc(1rem + 2vw), 9rem)`,
               background: "linear-gradient(90deg,#2579e3, #8e54f7)",
               WebkitBackgroundClip: "text",
               color: "transparent",
@@ -626,11 +651,11 @@ const AIAutomation = forwardRef((props, ref) => {
             }}
           >
             <Typography
-              variant="h6"
               sx={{
                 textAlign: expanded ? "left" : "center",
-                fontSize: "1.2rem",
+                fontSize: `clamp(1rem, calc(0.7rem + 1vw), 9rem)`,
                 width: "100%",
+                fontWeight: 100,
               }}
             >
               {services[0].title}
@@ -652,7 +677,7 @@ const AIAutomation = forwardRef((props, ref) => {
                       primary={detail}
                       primaryTypographyProps={{
                         sx: {
-                          fontSize: "0.95rem",
+                          fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
                           ml: -1,
                           color: "rgba(255, 255, 255, 0.85)",
                         },
@@ -663,7 +688,13 @@ const AIAutomation = forwardRef((props, ref) => {
               </List>
               {services.slice(1).map((service, index) => (
                 <Box key={index} sx={{ mt: 2, width: "100%" }}>
-                  <Typography variant="h6" sx={{ textAlign: "left" }}>
+                  <Typography
+                    sx={{
+                      textAlign: "left",
+                      fontSize: `clamp(1rem, calc(0.7rem + 1vw), 9rem)`,
+                      fontWeight: 100,
+                    }}
+                  >
                     {service.title}
                   </Typography>
                   <List>
@@ -682,7 +713,7 @@ const AIAutomation = forwardRef((props, ref) => {
                           primary={detail}
                           primaryTypographyProps={{
                             sx: {
-                              fontSize: "0.95rem",
+                              fontSize: `clamp(0.8rem, calc(0.5rem + 0.8vw), 9rem)`,
                               ml: -1,
                               color: "rgba(255, 255, 255, 0.85)",
                             },
@@ -867,7 +898,7 @@ const AIAutomation = forwardRef((props, ref) => {
                       ref={(el) => (symbolRefs.current[index] = el)}
                       style={{ display: "inline-block" }}
                     >
-                      ✤
+                      ➢
                     </span>
                     {service.title}
                   </Typography>

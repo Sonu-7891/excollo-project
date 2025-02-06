@@ -17,7 +17,7 @@ import ExcolloWebsiteLogo from "../assets/logo/ExcolloWebsiteLogo.png";
 const Footer = () => {
   const isTablet = useMediaQuery("(min-width:480px) and (max-width:899px)");
    const specificCondition = useMediaQuery(
-      "(min-width: 1800px) and (max-width: 2600px) and (max-height:1600px)"
+      "(min-width: 1800px) and (max-width: 2600px) and (max-height:1700px)"
     );
 
   const navigationLinks = [
@@ -214,7 +214,7 @@ const Footer = () => {
           left: 0,
           right: 0,
           height: "12%",
-          background: `radial-gradient(ellipse at bottom, rgba(196, 188, 213, 1) 0%, rgba(0, 0, 0, 0) 60%)`,
+          background: `radial-gradient(ellipse at bottom, rgba(196, 188, 213, 0.38) 0%, rgba(0, 0, 0, 0) 60%)`,
           zIndex: -1,
           "@media (max-width: 899px)": {
             display: "none",
@@ -261,7 +261,6 @@ const Footer = () => {
             }}
           >
             <Typography
-              variant="h6"
               sx={{
                 fontWeight: "500",
                 mb: 2,
@@ -279,13 +278,14 @@ const Footer = () => {
                     alt="excollo"
                     loading="lazy"
                     style={{
-                      width: {
-                        xs: "50%",
-                        sm: "50%",
-                        md: "50%",
-                        lg: "50%",
-                        xl: specificCondition ? "70%" : "50%",
-                      },
+                      width: specificCondition? "100%":"50%",
+                      // {
+                      //   xs: "20%",
+                      //   sm: "20%",
+                      //   md: "30%",
+                      //   lg: "50%",
+                      //   xl: specificCondition ? "70%" : "50%",
+                      // },
                     }}
                   />
                 </Link>
@@ -576,7 +576,7 @@ const Footer = () => {
                           mr: 0.5,
                         }}
                       />
-                      <Box sx={{ ml: 0.5, mt: -0.5, position: "relative" }}>
+                      <Box sx={{ ml: 0.5, mt: -0.5, position: "relative",cursor:"pointer !important" }}>
                         C-230 Bharat Marg, Hanuman Nagar, Vaishali, Jaipur,
                         Rajasthan - 302021
                       </Box>

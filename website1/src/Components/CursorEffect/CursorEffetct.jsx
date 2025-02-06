@@ -3,15 +3,15 @@ import { Box, styled, keyframes } from "@mui/material";
 import { useCursor } from "./context/CursorContext";
 const moveUpDown = keyframes`
   0%  {
-    transform: translateY(42px) scale(0);
+    transform: translateY(52px) scale(0);
     opacity: 0;
   }
   50% {
-    transform: translateY(42px) scale(1.1);
+    transform: translateY(52px) scale(1.1);
     opacity: 0.5;
   }
   100% {
-    transform: translateY(8px) scale(1);
+    transform: translateY(10px) scale(1);
     opacity: 1;
   }
 `;
@@ -28,27 +28,42 @@ const CursorContainer = styled(Box)({
 });
 const CursorOuter = styled(Box)(({ theme, isIdle, isPointer, isHovered }) => ({
   width: isIdle || isPointer || isHovered ? 30 : 30,
-  height: isIdle || isPointer || isHovered ? 60 : 30,
+  height: isIdle || isPointer || isHovered ? 70 : 30,
   borderRadius: isIdle || isPointer || isHovered ? "50px" : "50%",
+  zIndex: 9999,
   position: "absolute",
   transform: "translate(-50%, -50%)",
   transition:
     "width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-  background:
-    "linear-gradient(180deg, rgb(169, 63, 255) 0%, rgb(94, 129, 235) 100%)",
-  boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 15px 2px",
+  backgroundColor: "rgb(0, 0, 0)",
+  // border: "1px solid rgb(169, 63, 255)  ", //linear-gradient(90deg, rgb(169, 63, 255) 0%, rgb(94, 129, 235) 100%)
+  background: "transparent",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    inset: 0,
+    padding: "2px", // Adjust the thickness of the border
+    background:
+      "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
+    borderRadius: "50px",
+    WebkitMask:
+      "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+    WebkitMaskComposite: "xor",
+    maskComposite: "exclude",
+    // zIndex: -1,
+    zIndex: 9999,
+  },
   "&.hovered": {
     width: 60,
     height: 60,
-    boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 15px 2px",
-    background: "rgba(255, 255, 255, 1)",
+    zIndex: 9999,
+    backgroundColor: "rgb(0, 0, 0)",
     transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
   },
   "&.pointer": {
     width: 40,
     height: 40,
     background: " black transparent",
-    boxShadow: "rgba(133, 86, 245, 0.6) 0px 0px 20px 3px",
     transform: "translate(-50%, -50%) rotate(45deg)",
   },
 }));
@@ -74,7 +89,20 @@ const CustomCursor = ({ idleTimeout = 5000 }) => {
   const requestRef = useRef();
   const [isIdle, setIsIdle] = useState(false);
   const [isPointer, setIsPointer] = useState(false);
-  const [lastActivity, setLastActivity] = useState(Date.now());
+  const idleTimerRef = useRef(null);
+
+  const resetIdleTimer = () => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
+    setIsIdle(false);
+    idleTimerRef.current = setTimeout(() => {
+      if (!isHovered) {
+        setIsIdle(true);
+      }
+    }, idleTimeout);
+  };
+
   useEffect(() => {
     const moveCursor = (e) => {
       mouse.current = { x: e.clientX, y: e.clientY };
@@ -83,8 +111,8 @@ const CustomCursor = ({ idleTimeout = 5000 }) => {
         y: mouse.current.y - lastMousePosition.current.y,
       };
       lastMousePosition.current = { x: mouse.current.x, y: mouse.current.y };
-      setLastActivity(Date.now());
-      setIsIdle(false);
+      resetIdleTimer();
+
       // Check if hovering over button or link
       const target = e.target;
       const isClickable =
@@ -95,29 +123,30 @@ const CustomCursor = ({ idleTimeout = 5000 }) => {
         getComputedStyle(target).cursor === "pointer";
       setIsPointer(isClickable);
     };
+
     const handleActivity = () => {
-      setLastActivity(Date.now());
-      setIsIdle(false);
+      resetIdleTimer();
     };
+
     window.addEventListener("mousemove", moveCursor);
     window.addEventListener("click", handleActivity);
     window.addEventListener("keypress", handleActivity);
     window.addEventListener("scroll", handleActivity);
-    const idleTimer = setInterval(() => {
-      const timeSinceLastActivity = Date.now() - lastActivity;
-      console.log(timeSinceLastActivity);
-      if (timeSinceLastActivity >= idleTimeout && !isHovered) {
-        setIsIdle(true);
-      }
-    }, 500000);
+
+    // Initial idle timer
+    resetIdleTimer();
+
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("click", handleActivity);
       window.removeEventListener("keypress", handleActivity);
       window.removeEventListener("scroll", handleActivity);
-      clearInterval(idleTimer);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
     };
   }, [idleTimeout, isHovered]);
+
   const animate = () => {
     if (cursorOuterRef.current && cursorInnerRef.current) {
       cursorOuter.current.x += (mouse.current.x - cursorOuter.current.x) * 0.15;
@@ -162,10 +191,12 @@ const CustomCursor = ({ idleTimeout = 5000 }) => {
           ref={cursorInnerRef}
           sx={{
             display: isIdle ? "block" : "none",
-            width: isHovered ? "35px" : isIdle ? "10px" : "8px",
-            height: isHovered ? "35px" : isIdle ? "10px" : "8px",
+            width: isHovered ? "35px" : isIdle ? "10px" : "10px",
+            height: isHovered ? "35px" : isIdle ? "10px" : "10px",
             opacity: isHovered ? 1 : 0.95,
-            background: isHovered ? "white" : "black",
+            background: isHovered
+              ? "white"
+              : "linear-gradient(90deg, rgb(169, 63, 255) 0%, rgb(94, 129, 235) 100%)",
             transform: `scale(${isHovered ? 1.2 : 1})`,
             zIndex: 9999,
             // boxShadow: isHovered

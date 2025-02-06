@@ -38,7 +38,7 @@ const carouselContent = [
   {
     title: "Sales Channel Development",
     description:
-      "Scalable websites, web apps, and mobile apps tailored to meet your business’s unique challenges and goals.",
+      "Scalable websites and applications on both, web and mobile, tailored to meet your business’s unique challenges and goals.",
     link: "/services",
   },
   {
@@ -61,35 +61,64 @@ const carouselContent = [
   },
 ];
 
+const ResponsiveView = ({ type, isTablet }) => {
+  return (
+    <Box
+      sx={{
+        p: 2,
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gridTemplateRows: "repeat(5, auto)",
+          gap: 2,
+          width: "100%",
+          maxWidth: "600px", // Maximum width for tablet
+          justifyItems: "center", // Center cards horizontally
+        }}
+      >
+        {carouselContent.map((item, index) => (
+          <ResponsiveCard
+            key={index}
+            {...item}
+            type={type}
+            isTablet={isTablet}
+            isMobile={!isTablet} // Add this prop if needed
+          />
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+// Update ResponsiveCard component
 const ResponsiveCard = ({ title, description, type, isTablet, isMobile }) => {
   return (
     <Box
       sx={{
-        width: "90%",
+        width: isMobile ? "90%" : "80%", // Adjust for mobile vs tablet
         mb: 4,
         p: 2,
-        ml: isTablet ? "50px" : "0",
         borderRadius: 2,
         fontFamily: '"Inter", sans-serif',
-        backgroundColor: "linear-gradient(180deg, #2579e3, #8e54f7 100%)",
-        // backdropFilter: "blur(-10px)",
         boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 10px 0px",
         border: "1px solid #7e22ce",
-
-        alignItems: "center",
         cursor: "pointer",
         transition: "transform 0.3s",
-        ...(isTablet && {
-          width: "100%",
-          height: "auto",
-        }),
+        marginLeft: "auto",
+        marginRight: "auto",
       }}
     >
       <Typography
         variant="h4"
         sx={{
           fontWeight: 400,
-          fontSize: isTablet ? "2rem" : "1.5rem",
+          fontSize: { xs: `clamp(1.35rem, calc(0.5rem + 1vw), 9rem)` },
           mb: 2,
           textAlign: "center",
           background: isTablet
@@ -102,41 +131,16 @@ const ResponsiveCard = ({ title, description, type, isTablet, isMobile }) => {
         {title}
       </Typography>
       <Typography
-        variant="body1"
         sx={{
           color: "#ddd",
           fontWeight: 200,
+          fontSize: { xs: `clamp(0.8rem, calc(0.5rem + 1vw), 9rem)` },
           letterSpacing: "0.001em",
           textAlign: "center",
         }}
       >
         {description}
       </Typography>
-    </Box>
-  );
-};
-
-const ResponsiveView = ({ type, isTablet }) => {
-  return (
-    <Box sx={{ p: 2, height: "150vh" }}>
-      <Box
-        sx={{
-          display: "grid",
-
-          gridTemplateColumns: isTablet ? "repeat(1, 600px)" : "repeat(1, 1fr)",
-          gridTemplateRows: isTablet ? "repeat(5, 200px)" : "repeat(5, 1fr)",
-          gap: 1,
-        }}
-      >
-        {carouselContent.map((item, index) => (
-          <ResponsiveCard
-            key={index}
-            {...item}
-            type={type}
-            isTablet={isTablet}
-          />
-        ))}
-      </Box>
     </Box>
   );
 };
@@ -167,6 +171,7 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
   );
   const issmallLaptop = useMediaQuery(theme.breakpoints.up("md"));
   const islaptop = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXtraLargeLaptop = useMediaQuery(theme.breakpoints.up("xl"));
 
   // Dynamic card dimensions
   const { CARD_WIDTH, GAP } = getCardDimensions(window.innerWidth);
@@ -207,15 +212,21 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
   const handleWheelEvent = (e) => {
     if (isMobile || isTablet) return;
 
+    const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
     if (!isOverCard) {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      if (isHorizontalScroll) {
         e.preventDefault();
       }
       return;
     }
 
-    e.stopPropagation();
-    e.preventDefault();
+    if (isHorizontalScroll) {
+      e.stopPropagation();
+      e.preventDefault();
+    } else {
+      return;
+    }
 
     if (!containerRef.current || isScrolling) return;
 
@@ -378,8 +389,20 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
         : isMobile || isTablet
         ? "auto"
         : "calc(60vh + 5vw)",
-      marginTop: isMobile || isTablet ? "1rem" : "4rem",
-      marginBottom: isMobile || isTablet ? "1rem" : "4rem",
+      marginTop: isLargeScreen
+        ? "4rem"
+        : islaptop
+        ? "2rem"
+        : isMobile || isTablet
+        ? "1rem"
+        : "4rem",
+      marginBottom: isLargeScreen
+        ? "4rem"
+        : islaptop
+        ? "2rem"
+        : isMobile || isTablet
+        ? "1rem"
+        : "4rem",
       padding: isMobile || isTablet ? "1rem" : "1rem",
       display: "flex",
       flexDirection: "column",
@@ -405,13 +428,12 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
         : `perspective(1000px) scale(1.05) rotateX(${rotation.y}deg) rotateY(${
             rotation.x
           }deg) translateZ(${type === "title" ? "30px" : "10px"})`,
-
       "& .MuiTypography-h3": {
         fontSize: {
           xs: "2.5rem",
           md: "clamp(0.25rem, calc(1rem + 2vw), 1.9rem)",
           lg: "clamp(0.25rem, calc(1.5rem + 4vw), 2.8rem)",
-          xl: "clamp(0.25rem, calc(2rem + 6vw), 4rem)",
+          xl: "clamp(0.25rem, calc(2rem + 6vw), 3.7rem)",
         },
         fontWeight: "400",
         background: "linear-gradient(180deg, #2579e3, #8e54f7)",
@@ -522,7 +544,9 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
               <Link
                 to={item.link || "#"}
                 style={{
-                  marginTop: islaptop
+                  marginTop: isXtraLargeLaptop
+                    ? "-6rem"
+                    : islaptop
                     ? "-5rem"
                     : issmallLaptop
                     ? "-6rem"
@@ -582,8 +606,8 @@ const DesktopCarousel = ({ isReverse, type = "title" }) => {
             "&.Mui-disabled": {
               color: "#716b6b",
             },
-            marginRight: { xs: "2rem", md: "5rem", lg: "7rem" }, // Dynamically adjust margin
-            fontSize: { xs: "1.2rem", md: "1.5rem", lg: "2rem", xl: "2.5rem" }, // Scale icon size
+            marginRight: { md: "5rem", lg: "7rem" }, // Dynamically adjust margin
+            fontSize: { md: "1.5rem", lg: "2rem", xl: "2.5rem" }, // Scale icon size
           }}
         >
           <ArrowForwardIosIcon

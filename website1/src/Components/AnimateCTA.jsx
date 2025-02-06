@@ -16,6 +16,7 @@ const CTAContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   padding: theme.spacing(2.5),
+  
   [theme.breakpoints.up("xl")]: {
     padding: theme.spacing(3),
   },
@@ -28,11 +29,16 @@ const StyledButton = styled(Button)(({ theme }) => ({
   background:
     "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)",
   color: "white",
+  transition: " background transform 0.3s ease", // Add smooth transition for transform
+  
+
   "&:hover": {
-    backgroundColor: "#0077ED",
+    transform: " scale(1.05)", // Add hover scale effect
+    background:
+      "linear-gradient(180deg, rgba(170, 63, 255, 0.9) 0%, rgba(94, 129, 235, 0.9) 100%)", // Maintain gradient on hover
   },
   [theme.breakpoints.down("sm")]: {
-    fontSize: "0.875rem",
+    fontSize: "1rem",
     padding: "10px 20px",
     minWidth: "120px",
   },
@@ -42,7 +48,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
     minWidth: "150px",
   },
   [theme.breakpoints.up("md")]: {
-    fontSize: "1.0625rem",
+    fontSize: `clamp(1rem, calc(0.3rem + 1vw), 1.5rem)`,
     padding: "14px 28px",
     minWidth: "180px",
   },
@@ -51,13 +57,13 @@ const StyledButton = styled(Button)(({ theme }) => ({
     padding: "16px 32px",
     minWidth: "200px",
   },
-  [theme.breakpoints.up(2000)]: {
-    fontSize: "1.25rem",
-    padding: "20px 40px",
-    minWidth: "240px",
-  },
+  // [theme.breakpoints.up(2000)]: {
+  //   fontSize: "1.25rem",
+  //   padding: "20px 40px",
+  //   minWidth: "240px",
+  // },
   [theme.breakpoints.up(2550)]: {
-    fontSize: "1.375rem",
+    fontSize: `clamp(0.2rem, calc(0.5rem + 0.8vw), 40rem)`,
     padding: "24px 48px",
     minWidth: "280px",
   },
@@ -133,8 +139,8 @@ const AnimatedCTA = () => {
         duration: 0.1,
       })
       .to(button, {
-        width: "80px",
-        height: "80px",
+        width: "60px",
+        height: "60px",
         padding: 0,
         borderRadius: "50%",
         fontSize: 0,
@@ -142,13 +148,23 @@ const AnimatedCTA = () => {
         duration: 0.6,
       })
       .to(button, {
-        width: "200px",
-        height: "80px",
-        padding: "12px 24px",
+        width: "7.5vw",
+        height: "7vh",
+
+        padding: {
+          xs: "15px 30px",
+          sm: "16px 32px",
+          md: " 1vw 1vw",
+          xl: "0.5vw 1vw",
+        },
         borderRadius: "980px",
-        fontSize: "1.25rem",
+        fontSize: `clamp(0rem, calc(0.5rem + 0.7vw), 4rem)`,
+
         minWidth: "200px",
         duration: 0.36,
+        "&:hover": {
+          transform: "scale(1.05)",
+        },
       })
       .to(button, {
         y: "10%",
@@ -181,9 +197,10 @@ const AnimatedCTA = () => {
         ref={buttonRef}
         variant="contained"
         disableElevation
-        onClick={handleButtonClick} // Add onClick handler
+        onClick={handleButtonClick}
+        // Add onClick handler
       >
-        Talk to Us
+        LET’S CONNECT
       </StyledButton>
     </CTAContainer>
   );
