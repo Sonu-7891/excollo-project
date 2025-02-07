@@ -3,91 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Cursor</title>
+    <title>Contact Form with Google Form Integration</title>
     <style>
-        * {
-    cursor: none;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #121212;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-/* Custom Cursor */
-.custom-cursor {
-    position: fixed;
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition: transform 0.2s ease-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-}
-
-/* Inner cursor text */
-.cursor-inner {
-    opacity: 0;
-    transition: opacity 0.2s ease-out;
-}
-
-/* Hover area */
-.hover-area {
-    padding: 50px;
-    border: 2px dashed white;
-    text-align: center;
-    font-size: 24px;
-}
-
-/* Cursor effect on hover */
-.hover-area:hover ~ .custom-cursor {
-    width: 100px;
-    height: 100px;
-    transform: translate(-50%, -50%) scale(1.2) rotate(15deg);
-}
-
-.hover-area:hover ~ .custom-cursor .cursor-inner {
-    opacity: 1;
-}
-
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        input, button { width: 100%; margin-top: 10px; padding: 10px; }
+        button { background-color: blue; color: white; border: none; cursor: pointer; }
+        #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <input type="text" id="message" placeholder="Your Message" required>
+            <input type="datetime-local" id="datetime" required>
 
-    <div class="custom-cursor">
-        <div class="cursor-inner">
-            <span class="cursor-text">Explore</span>
-        </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div>
     </div>
 
-    <div class="hover-area">
-        Hover over me
-    </div>
+    <script>
+        document.getElementById("contactForm").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    <script >
-        document.addEventListener("DOMContentLoaded", () => {
-    const cursor = document.querySelector(".custom-cursor");
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+    const datetime = document.getElementById("datetime").value; // Get scheduled date and time
 
-    document.addEventListener("mousemove", (e) => {
-        cursor.style.left = `${e.clientX}px`;
-        cursor.style.top = `${e.clientY}px`;
+    const googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdH1-pOT7JDOFpBe_Vd9wNJcu32PqLbKVIfumtIzp5gJ6uUTg/formResponse";
+
+    // firstName: "entry.1875910263",
+    // lastName: "entry.654080252",
+    // phoneNumber: "entry.1490732534",
+    // email: "entry.321715765",
+    // services: "entry.1314171994",
+    // message: "entry.580072994",
+
+    const formData = new FormData();
+    formData.append("entry.1875910263", name);
+    formData.append("entry.321715765", email);
+    formData.append("entry.580072994", message);
+    formData.append("entry.555555555", datetime); // Replace with actual entry ID for date/time
+
+    fetch(googleFormURL, {
+        method: "POST",
+        body: formData,
+        mode: "no-cors"
+    }).then(() => {
+        document.getElementById("response").innerText = "Thank you! Your response has been submitted.";
+        document.getElementById("contactForm").reset();
+
+        // Send data to Google Apps Script for Calendar event
+        fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+            method: "POST",
+            body: JSON.stringify({ name, email, message, datetime }),
+            headers: { "Content-Type": "application/json" }
+        });
+    }).catch(() => {
+        document.getElementById("response").innerText = "Error submitting form. Please try again.";
     });
 });
 
