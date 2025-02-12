@@ -22,15 +22,15 @@ const OurServices = () => {
   const isLandscapeMedium = useMediaQuery(
     "(min-width: 625px) and (max-width: 899px) and (orientation: landscape)"
   );
-  const isMediumScreen = useMediaQuery(theme.breakpoints.only("md"));
-  const isLargeScreen = useMediaQuery(theme.breakpoints.only("lg"));
-  const isExtraLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
+  const sectionRef = useRef(null);
+  const threeDEContainerRef = useRef(null);
+
   const aiAutomationRef = useRef(null);
   const salesChannelRef = useRef(null);
   const mlDrivenDataAnalysisRef = useRef(null);
   const productDevelopmentRef = useRef(null);
   const techConsultancyRef = useRef(null);
-  const sectionRef = useRef(null);
+  // const sectionRef = useRef(null);
   // Reload the page on window resize
   useEffect(() => {
     let resizeTimer;
@@ -46,36 +46,84 @@ const OurServices = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+ useEffect(() => {
+   let ticking = false;
+
+   const handleScroll = () => {
+     if (!ticking) {
+       window.requestAnimationFrame(() => {
+         const scrollY = window.scrollY;
+         setShowButton(scrollY > 250);
+
+         // Only collapse panels if not mobile
+         if (!isMobile && sectionRef.current) {
+           const refs = [
+             "aiAutomation",
+             "salesChannel",
+             "mlDrivenDataAnalysis",
+             "productDevelopment",
+             "techConsultancy",
+           ];
+
+           refs.forEach((ref) => {
+             if (sectionRef.current[ref]?.current?.collapsePanel) {
+               sectionRef.current[ref].current.collapsePanel();
+             }
+           });
+         }
+
+         ticking = false;
+       });
+       ticking = true;
+     }
+   };
+
+   window.addEventListener("scroll", handleScroll, { passive: true });
+   return () => window.removeEventListener("scroll", handleScroll);
+ }, [isMobile]);
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 250) {
-        setShowButton(true);
-      } else {
-        setShowButton(false);
-      }
-      if (!isMobile) {
-        if (aiAutomationRef.current) {
-          aiAutomationRef.current.collapsePanel();
-        }
-        if (salesChannelRef.current) {
-          salesChannelRef.current.collapsePanel();
-        }
-        if (mlDrivenDataAnalysisRef.current) {
-          mlDrivenDataAnalysisRef.current.collapsePanel();
-        }
-        if (productDevelopmentRef.current) {
-          productDevelopmentRef.current.collapsePanel();
-        }
-        if (techConsultancyRef.current) {
-          techConsultancyRef.current.collapsePanel();
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isMobile]);
+    if (threeDEContainerRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            threeDEContainerRef.current.style.visibility = "visible";
+          } else {
+            threeDEContainerRef.current.style.visibility = "hidden";
+          }
+        },
+        { threshold: 0.1 }
+      );
+
+      observer.observe(threeDEContainerRef.current);
+      return () => observer.disconnect();
+    }
+  }, []);
+
+  const ThreeDEContainer = ({ mobile }) => (
+    <Box
+      ref={threeDEContainerRef}
+      sx={{
+        width: mobile ? "100%" : { md: "50%", lg: "40%" },
+        height: mobile ? "60vh" : "100vh",
+        display: mobile ? "block" : "flex",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <ThreeDE />
+      </Box>
+    </Box>
+  );
+
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

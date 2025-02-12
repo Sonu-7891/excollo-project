@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Paper, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "framer-motion";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,29 +14,25 @@ const FeatureCard = ({
   isMainCard,
   isMobile,
   isTablet,
-  md,
-  lg,
-  xl,
 }) => {
   const cardStyles = {
     background: "linear-gradient(180deg, #05000A 0%, #1B1125 100%)",
     borderRadius: "12px",
     textAlign: "center",
     padding: "1rem",
-    width: "100%",
     height: isMobile ? "150px" : isTablet ? "200px" : "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: "1rem",
-    boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 100px 0px",
+    boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 20px 0px",
     border: isFinalState ? "1px solid #7e22ce" : "1px solid #7e22ce",
     transition: "all 0.3s ease",
     "&:hover": {
       backgroundColor: "#000000",
       transform: "translateY(-5px)",
-      boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 100px 0px",
+      boxShadow: "rgba(133, 86, 245, 0.4) 0px 0px 25px 0px",
     },
   };
 
@@ -66,7 +53,7 @@ const FeatureCard = ({
       : isMobile
       ? `clamp(1.35rem, calc(0.5rem + 1vw), 9rem)`
       : isTablet
-      ? `clamp(1.35rem, calc(0.5rem + 1vw), 9rem)`
+      ? `clamp(1.35rem, calc(1rem + 1vw), 9rem)`
       : {
           md: `clamp(0.25rem,calc(1rem + 0.5vw),2.2rem)`,
           lg: `clamp(0.25rem,calc(1rem + 0.8vw),2.2rem)`,
@@ -89,15 +76,15 @@ const FeatureCard = ({
           className="feature-description"
           sx={{
             fontSize: {
-              xs: `clamp(0.8rem, calc(0.5rem + 1vw), 9rem)`,
+              xs: `clamp(0.8rem, calc(0.7rem + 1vw), 9rem)`,
               md: `clamp(0.5rem, calc(0.6rem + 0.4vw), 1.5rem)`,
               lg: `clamp(0.5rem, calc(0.6rem + 0.6vw), 1.8rem)`,
               xl: `clamp(0.25rem, calc(0.5rem + 0.8vw), 3rem)`,
             },
-            fontWeight: 200,
-            lineHeight: "1.7",
+            fontWeight: 100,
+            lineHeight: "1.5",
             fontFamily: '"Inter", sans-serif',
-            maxWidth: "80%",
+            maxWidth: isMobile ? "90%" : "80%",
             opacity: isMobile || isTablet ? 1 : showDescription ? 1 : 0,
             transition: "opacity 0.5s ease",
           }}
@@ -109,19 +96,37 @@ const FeatureCard = ({
   );
 };
 
+// pagination dots for mobile screen
+const PaginationDot = ({ active, onClick }) => (
+  <Box
+    onClick={onClick}
+    sx={{
+      width: "8px",
+      height: "8px",
+      borderRadius: "50%",
+      backgroundColor: active ? "#8e54f7" : "rgba(142, 84, 247, 0.3)",
+      margin: "0 4px",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+      transform: active ? "scale(1.2)" : "scale(1)",
+    }}
+  />
+);
+
 const HeroPageSection4 = ({ onComplete }) => {
   const [isCardShrunk, setIsCardShrunk] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(1);
   const [direction, setDirection] = useState(0);
   const [key, setKey] = useState(0);
   const sectionRef = useRef(null);
-  const previousWidthRef = useRef(window.innerWidth);
+  // const previousWidthRef = useRef(window.innerWidth);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const md = useMediaQuery(theme.breakpoints.up("md"));
-  const lg = useMediaQuery(theme.breakpoints.up("lg"));
-  const xl = useMediaQuery(theme.breakpoints.up("xl"));
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
 
   const cards = [
     {
@@ -139,17 +144,57 @@ const HeroPageSection4 = ({ onComplete }) => {
         "Cutting-edge AI and automation drive scalable, innovative solutions.",
     },
   ];
+  //array for mobile and tablet
+  const MobileCards = [
+    {
+      title: "Iterative Excellence",
+      description:
+        "Our solutions evolve with your business, ensuring long-term success.",
+    },
+    {
+      title: "Outcome as a Service",
+      description: "We deliver tangible results not just digital products.",
+    },
+    {
+      title: "Future-Forward Strategies",
+      description:
+        "Cutting-edge AI and automation drive scalable, innovative solutions.",
+    },
+  ];
 
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % cards.length);
+  // mobile card swapping function
+  const handleDragStart = (event) => {
+    setIsDragging(true);
+    setDragStart(event.touches[0].clientX);
   };
 
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + cards.length) % cards.length
-    );
+  const handleDragMove = (event) => {
+    if (!isDragging) return;
+
+    const currentX = event.touches[0].clientX;
+    const diff = currentX - dragStart;
+    setDragOffset(diff);
+  };
+
+  const handleDragEnd = (event) => {
+    if (!isDragging) return;
+
+    setIsDragging(false);
+    const dragEnd = event.changedTouches[0].clientX;
+    const dragThreshold = 50; // Minimum distance to trigger swipe
+    const diff = dragEnd - dragStart;
+
+    if (Math.abs(diff) >= dragThreshold) {
+      if (diff > 0 && currentIndex > 0) {
+        // Swipe right
+        setCurrentIndex((prev) => prev - 1);
+      } else if (diff < 0 && currentIndex < MobileCards.length - 1) {
+        // Swipe left
+        setCurrentIndex((prev) => prev + 1);
+      }
+    }
+
+    setDragOffset(0);
   };
 
   const initializeGSAPAnimations = () => {
@@ -172,8 +217,8 @@ const HeroPageSection4 = ({ onComplete }) => {
 
     const mainCardTrigger = ScrollTrigger.create({
       trigger: ".hero-page-section-4",
-      start: "center 60%",
-      end: "center 60%",
+      start: "center 55%",
+      end: "center 55%",
       scrub: 1,
       pin: true,
       pinSpacing: true,
@@ -189,7 +234,7 @@ const HeroPageSection4 = ({ onComplete }) => {
         // Card shrinking animation
         gsap.to(".main-card", {
           width: `${80 - scale * 60}%`,
-          duration: 0.3,
+          duration: 1,
           ease: "power2.out",
         });
 
@@ -203,11 +248,9 @@ const HeroPageSection4 = ({ onComplete }) => {
 
         // Cards container animation
         gsap.to(".cards-container", {
-          gap: `${2 + scale * 8}rem`,
+          gap: "10%",
           duration: 0.3,
           ease: "power2.out",
-          marginLeft: `-${scale * 1}%`,
-          marginRight: `${scale * 1.5}%`,
         });
 
         const dynamicInitialFontSize = () => {
@@ -284,43 +327,17 @@ const HeroPageSection4 = ({ onComplete }) => {
   if (isMobile || isTablet) {
     return (
       <Box
-        key={key}
         sx={{
-          minHeight: {
-            xs: "50vh",
-          },
+          minHeight: { xs: "50vh" },
           color: "#fff",
           fontFamily: '"Inter", sans-serif',
           position: "relative",
-          maxWidth: {
-            xs: "100%",
-            sm: "90%",
-            md: "85%",
-          },
+          maxWidth: "100%",
+          paddingTop: { xs: "25%", sm: "25%" },
           mx: "auto",
           zIndex: 2,
-          marginTop: {
-            xs: "8vh",
-            sm: "0",
-          },
-          "@media (min-width: 300px) and (max-width:340px)": {
-            marginTop: "22vh",
-          },
-          "@media (min-width: 341px) and (max-width:380px)": {
-            marginTop: "18vh",
-          },
-          "@media (min-width: 381px) and (max-width:400px)": {
-            marginTop: "18vh",
-          },
-          "@media (min-width: 401px) and (max-width:450px)": {
-            marginTop: "13vh",
-          },
-          "@media (min-width: 451px) and (max-width:500px)": {
-            marginTop: "10vh",
-          },
-          "@media (min-width: 800px) and (max-width:899px)": {
-            marginTop: "10vh",
-          },
+          marginTop: { xs: "8vh", sm: "0" },
+          overflow: "hidden",
         }}
       >
         <Typography
@@ -331,9 +348,7 @@ const HeroPageSection4 = ({ onComplete }) => {
             lineHeight: 1.167,
             letterSpacing: "-0.01562em",
             mb: "20%",
-            fontSize: {
-              xs: `clamp(1.75rem, calc(1.15rem + 2vw), 9rem)`,
-            },
+            fontSize: { xs: `clamp(1.75rem, calc(1.15rem + 2vw), 9rem)` },
             position: "relative",
             zIndex: 2,
           }}
@@ -351,77 +366,68 @@ const HeroPageSection4 = ({ onComplete }) => {
           </Box>
         </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+        <motion.div
+          style={{
             position: "relative",
-            height: "300px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            columnGap: "12%",
+            width: "100%",
+            padding: "0 20%",
+            overflow: "visible",
+            touchAction: "pan-y pinch-zoom",
           }}
+          animate={{
+            x: `calc(-${currentIndex * 60}% + ${
+              currentIndex * 8
+            }% + ${dragOffset}px)`,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 200,
+            damping: 20,
+          }}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
         >
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              initial={{ opacity: 0, x: direction > 0 ? "100%" : "-100%" }}
-              animate={{ opacity: 1, x: "0%" }}
-              exit={{ opacity: 0, x: direction > 0 ? "-100%" : "100%" }}
-              transition={{ duration: 0.5 }}
-              style={{
-                width: "90%",
-                position: "absolute",
-                left: "0%",
-                x: "-50%", // Centers the element using Framer Motion's transform
+          {MobileCards.map((card, index) => (
+            <Box
+              key={index}
+              sx={{
+                width: "60%",
+                flexShrink: 0,
+                transition: "all 0.3s ease",
+                opacity: index === currentIndex ? 1 : 0.5,
+                transform: `scale(${index === currentIndex ? 1.2 : 0.8})`,
               }}
             >
               <FeatureCard
-                title={cards[currentIndex].title}
-                description={cards[currentIndex].description}
+                title={card.title}
+                description={card.description}
                 isMobile={isMobile}
                 isTablet={isTablet}
               />
-            </motion.div>
-          </AnimatePresence>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "30%",
-              mt: isMobile ? 25 : 32,
-            }}
-          >
-            <Box
-              sx={{
-                borderRadius: "50%",
-                border: "1px solid rgb(206, 84, 247)",
-                height: "40px",
-                width: "40px",
-              }}
-            >
-              <IconButton
-                onClick={handlePrev}
-                sx={{ ml: 0.5, p: 1, color: "white" }}
-              >
-                <ArrowBackIosIcon />
-              </IconButton>
             </Box>
-            <Box
-              sx={{
-                borderRadius: "50%",
-                border: "1px solid rgb(206, 84, 247)",
-                height: "40px",
-                width: "40px",
-              }}
-            >
-              <IconButton
-                onClick={handleNext}
-                sx={{ ml: 0.2, p: 1, color: "white" }}
-              >
-                <ArrowForwardIosIcon />
-              </IconButton>
-            </Box>
-          </Box>
+          ))}
+        </motion.div>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+            gap: 1,
+          }}
+        >
+          {MobileCards.map((_, index) => (
+            <PaginationDot
+              key={index}
+              active={currentIndex === index}
+              onClick={() => setCurrentIndex(index)}
+            />
+          ))}
         </Box>
       </Box>
     );
@@ -462,8 +468,6 @@ const HeroPageSection4 = ({ onComplete }) => {
             },
             position: "relative",
             top: "20px",
-            background: "black",
-            textAlign: "center",
           }}
         >
           Why Choose{" "}
@@ -483,21 +487,20 @@ const HeroPageSection4 = ({ onComplete }) => {
       <Box
         className="cards-container"
         sx={{
-          position: "relative",
           height: "calc(100vh - 0%)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          gap: "2rem",
-          padding: "0 2rem",
+          maxWidth: "100%",
+          boxSizing: "border-box",
           transition: "gap 0.3s ease",
         }}
       >
         <Box
           className="side-cards-container"
           sx={{
-            width: "20%",
             height: "50%",
+            maxWidth: "20%",
             opacity: 0,
           }}
         >
@@ -514,7 +517,7 @@ const HeroPageSection4 = ({ onComplete }) => {
           sx={{
             width: "80%",
             height: "50%",
-            transition: "width 0.4s ease",
+            flexShrink: 0,
           }}
         >
           <FeatureCard
@@ -529,8 +532,8 @@ const HeroPageSection4 = ({ onComplete }) => {
         <Box
           className="side-cards-container"
           sx={{
-            width: "20%",
             height: "50%",
+            maxWidth: "20%",
             opacity: 0,
           }}
         >
